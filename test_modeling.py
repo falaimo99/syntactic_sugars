@@ -44,7 +44,3 @@ class Collection(EntityWithMetadata):
         self.items = items
 
         super().__init__(identifier, label, title, creators)
-
-entity1 = IdentifiableEntity(123)
-print(entity1.getIdentifier())
-
