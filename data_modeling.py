@@ -36,11 +36,11 @@ class Canvas(EntityWithMetadata):
 class Manifest(EntityWithMetadata):
     def __init__(self, identifier, label, title, creators, items):
         self.items = items
-
+        #methods are missing
         super().__init__(identifier, label, title, creators)
 
 class Collection(EntityWithMetadata):
     def __init__(self, identifier, label, title, creators, items):
         self.items = items
-
+        #methods are missing
         super().__init__(identifier, label, title, creators)
