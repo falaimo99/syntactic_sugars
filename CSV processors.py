@@ -66,7 +66,6 @@ class MetadataProcessor(Processor):
                     z.remove(k)
                     if len(z) == 0:
                         list1.remove(z)
-        proxy_series = Series(list1)
         proxy_dataframe = DataFrame({"creator": list1})
 
         proxy_id = []
