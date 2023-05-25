@@ -57,11 +57,17 @@ class MetadataProcessor(Processor):
                 creators["creator"] = creators["creator"].str.split(";") 
                 creators = creators.explode("creator")
                 creators = creators.reset_index(drop=True)
-        creators = creators.drop_duplicates()
-        creators = creators.reset_index(drop=True)
+        values_df2 = creators["creator"].values
+        list_1 =[]
         creator_internal_id = []
-        for idx, row in creators.iterrows():
-            creator_internal_id.append("creator-" + str(idx))
+        for z in values_df2:
+                if z not in list_1:
+                        list_1.append(z)
+                        creator_internal_id.append("creator-" + str(list_1.index(z)))
+        else:
+            for i in list_1:
+                if z == i:
+                    creator_internal_id.append("creator-" + str(list_1.index(i)))
         creators.insert(0,"creatorId", Series(creator_internal_id, dtype= "string")) 
         
         metadata = path1[["id", "title","creator"]]
@@ -71,19 +77,8 @@ class MetadataProcessor(Processor):
                                 if ";" in item:
                                         row_to_copy = metadata.loc[index:index]  
                                         metadata = pd.concat([metadata.loc[:index], row_to_copy, metadata.loc[index+1:]]).reset_index(drop=True)
-        
-        values_df1 = metadata["creator"].values
-        values_df2 = creators["creator"].values
-        values_df2_c = creators['creatorId'].values
-
-
-        for i in range(len(values_df1)):
-            for j in range(len(values_df2)):
-                if values_df1[i] == values_df2[j]:
-                    values_df1[i] = values_df2_c[j]
-                elif ";" in values_df1[i]:
-                    if values_df2[j] in values_df1[j]:
-                        values_df1[i] = values_df2_c[j]  
+        metadata = metadata.drop(["creator"], axis = 1)          
+        metadata = metadata.join(creators["creatorId"])  
                                 
         metadata_id = []
         for idx, row in metadata.iterrows():
