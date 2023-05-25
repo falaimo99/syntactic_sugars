@@ -1,6 +1,7 @@
 from sqlite3 import connect
 from pandas import read_csv, Series, DataFrame
 import pandas as pd
+pd.options.mode.chained_assignment = None
 
 class Processor(object): #it needs to be modified
     def __init__(self, dbPathOrUrl):
@@ -50,45 +51,40 @@ class MetadataProcessor(Processor):
         super().__init__(dbPathorUrl)
     def uploadData(self, path:str):
         path1 = read_csv(path, keep_default_na=False, dtype={"id":"string", "creator":"string", "title":"string"})
-        
-        proxy = path1[["creator"]]
-        proxy1 = proxy["creator"]
-        list1= proxy1.tolist()
-        for idx, i in enumerate(list1):
+        creators = metadata[["creator"]]
+        for i in creators["creator"]:
             if ";" in i:
-                x = i.split(";") 
-                list1.remove(i)
-                list1.insert(idx,x)
-        for idx, z in enumerate(list1):
-            if type(z) ==list:
-                for k in z:
-                    list1.insert(idx,k)
-                    z.remove(k)
-                    if len(z) == 0:
-                        list1.remove(z)
-        proxy_dataframe = DataFrame({"creator": list1})
-
-        proxy_id = []
-        for idx, row in proxy_dataframe.iterrows():
-            proxy_id.append("creator-" + str(idx))
-        proxy_dataframe.insert(0, "creator_id", Series(proxy_id, dtype="string"))
-
+                creators["creator"] = creators["creator"].str.split(";") 
+                creators = creators.explode("creator")
+                creators = creators.reset_index(drop=True)
+        creators = creators.drop_duplicates()
+        creators = creators.reset_index(drop=True)
+        creator_internal_id = []
+        for idx, row in creators.iterrows():
+            creator_internal_id.append("creator-" + str(idx))
+        creators.insert(0,"creatorId", Series(creator_internal_id, dtype= "string")) 
         
         metadata = path1[["id", "title","creator"]]
-        metadata_id = []
-        for idx, row in metadata.iterrows():
-                    metadata_id.append("metadata-" + str(idx))
-
         for index, row in metadata.iterrows():
                 for item_idx, item in row.items():
                         if item_idx =="creator":
                                 if ";" in item:
                                         row_to_copy = metadata.loc[index:index]  
                                         metadata = pd.concat([metadata.loc[:index], row_to_copy, metadata.loc[index+1:]]).reset_index(drop=True)
+        
+        values_df1 = metadata["creator"].values
+        values_df2 = creators["creator"].values
+        values_df2_c = creators['creatorId'].values
 
-        metadata = metadata.drop(["creator"], axis = 1)          
-        metadata = metadata.join(proxy_dataframe["creator_id"])   
 
+        for i in range(len(values_df1)):
+            for j in range(len(values_df2)):
+                if values_df1[i] == values_df2[j]:
+                    values_df1[i] = values_df2_c[j]
+                elif ";" in values_df1[i]:
+                    if values_df2[j] in values_df1[j]:
+                        values_df1[i] = values_df2_c[j]  
+                                
         metadata_id = []
         for idx, row in metadata.iterrows():
             metadata_id.append("metadata-" + str(idx))
@@ -96,7 +92,8 @@ class MetadataProcessor(Processor):
 
         with connect(self.getDbPathOrUrl()) as con:   
             metadata.to_sql("metadataId", con, if_exists="replace", index=False)
-            proxy_dataframe.to_sql("creatorsId", con, if_exists="replace", index=False)
+            creators.to_sql("creatorsId", con, if_exists="replace", index=False) 
+        
 
          
         
