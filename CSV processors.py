@@ -1,6 +1,7 @@
 from sqlite3 import connect
 from pandas import read_csv, Series, DataFrame
 import pandas as pd
+import re
 pd.options.mode.chained_assignment = None
 
 class Processor(object): #it needs to be modified
@@ -54,7 +55,7 @@ class MetadataProcessor(Processor):
         creators = metadata[["creator"]]
         for i in creators["creator"]:
             if ";" in i:
-                creators["creator"] = creators["creator"].str.split(";") 
+                creators["creator"] = creators["creator"].str.split(r";\s") 
                 creators = creators.explode("creator")
                 creators = creators.reset_index(drop=True)
         values_df2 = creators["creator"].values
