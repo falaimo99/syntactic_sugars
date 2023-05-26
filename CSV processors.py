@@ -44,8 +44,8 @@ class AnnotationProcessor(Processor):
         annotations_ids = annotations_ids.join(image_ids["imageId"]) 
 
         with connect(self.getDbPathOrUrl()) as con:   
-            annotations_ids.to_sql("annotations", con, if_exists="replace", index=False)
-            image_ids.to_sql("image", con, if_exists="replace", index=False)  
+            annotations_ids.to_sql("Annotations", con, if_exists="replace", index=False)
+            image_ids.to_sql("Image", con, if_exists="replace", index=False)  
 
 class MetadataProcessor(Processor):
     def __init__(self, dbPathorUrl):
@@ -87,7 +87,7 @@ class MetadataProcessor(Processor):
         metadata.insert(0, "metadata_internal_id", Series(metadata_id, dtype="string"))
 
         with connect(self.getDbPathOrUrl()) as con:   
-            metadata.to_sql("metadata", con, if_exists="replace", index=False)
+            metadata.to_sql("EntityWithMetadata", con, if_exists="replace", index=False)
             creators.to_sql("creators", con, if_exists="replace", index=False) 
         
 
