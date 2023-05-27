@@ -4,7 +4,7 @@ import pandas as pd
 import re
 pd.options.mode.chained_assignment = None
 
-class Processor(object): #it needs to be modified
+class Processor(object): 
     def __init__(self, dbPathOrUrl):
         self.dbPathOrUrl = dbPathOrUrl
         self.dbPathOrUrl = ""
@@ -43,9 +43,22 @@ class AnnotationProcessor(Processor):
         annotations_ids.insert(0, "annotationsId", Series(annotations_internal_id, dtype="string"))
         annotations_ids = annotations_ids.join(image_ids["imageId"]) 
 
-        with connect(self.getDbPathOrUrl()) as con:   
+        with connect(self.dbPathOrUrl) as con:   
             annotations_ids.to_sql("Annotation", con, if_exists="replace", index=False)
-            image_ids.to_sql("Image", con, if_exists="replace", index=False)  
+            image_ids.to_sql("Image", con, if_exists="replace", index=False) 
+
+        conn = connect(self.dbPathOrUrl)
+        cursor = conn.cursor()
+
+        a = cursor.execute("SELECT name FROM sqlite_schema WHERE type='table' AND name='Annotation'")
+        a = cursor.fetchone()
+        b = cursor.execute("SELECT name FROM sqlite_schema WHERE type='table' AND name='Image'")
+        b = cursor.fetchone()
+        if 'Annotation' in a and 'Image' in b:
+            return True
+        else:
+            return False
+        conn.close()
 
 class MetadataProcessor(Processor):
     def __init__(self, dbPathorUrl):
@@ -86,10 +99,21 @@ class MetadataProcessor(Processor):
             metadata_id.append("metadata-" + str(idx))
         metadata.insert(0, "metadata_internal_id", Series(metadata_id, dtype="string"))
 
-        with connect(self.getDbPathOrUrl()) as con:   
+        with connect(self.dbPathOrUrl) as con:   
             metadata.to_sql("EntityWithMetadata", con, if_exists="replace", index=False)
             creators.to_sql("creators_table", con, if_exists="replace", index=False) 
         
+        conn = connect(self.dbPathOrUrl)
+        cursor = conn.cursor()
 
+        a = cursor.execute("SELECT name FROM sqlite_schema WHERE type='table' AND name='EntityWithMetadata'")
+        a = cursor.fetchone()
+        b = cursor.execute("SELECT name FROM sqlite_schema WHERE type='table' AND name='creators_table'")
+        b = cursor.fetchone()
+        if 'EntityWithMetadata' in a and 'creators_table' in b: 
+            return True
+        else:
+            return False
+        conn.close()
          
         

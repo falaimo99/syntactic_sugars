@@ -23,7 +23,7 @@ class RelationalQueryProcessor(Processor):
 
     def getAllAnnotations(self):
         with connect(self.getdbPathOrUrl()) as con: 
-            query_1 = "SELECT annotation,target,body,motivation FROM Annotations LEFT JOIN image ON Annotations.imageId == image.imageId"
+            query_1 = "SELECT annotation,target,body,motivation FROM Annotation LEFT JOIN image ON Annotation.imageId == image.imageId"
             all_annotations_query = read_sql(query_1,con)
         return all_annotations_query
 
@@ -35,19 +35,19 @@ class RelationalQueryProcessor(Processor):
 
     def getAnnotationsWithBody(self, bodyId): 
         with connect(self.getdbPathOrUrl()) as con: 
-            query_3 = "SELECT annotation,target,body,motivation FROM Annotations LEFT JOIN image ON Annotations.imageId == image.imageId WHERE body=?"
+            query_3 = "SELECT annotation,target,body,motivation FROM Annotation LEFT JOIN image ON Annotation.imageId == image.imageId WHERE body=?"
             annotations_with_body_query = read_sql(query_3,con)
         return annotations_with_body_query
 
     def getAnnotationsWithBodyAndTarget(self, bodyId, targetId): 
         with connect(self.getdbPathOrUrl()) as con: 
-            query_4 = "SELECT annotation,target,body,motivation FROM Annotations LEFT JOIN image ON Annotations.imageId == image.imageId WHERE body=? AND target=?"
+            query_4 = "SELECT annotation,target,body,motivation FROM Annotation LEFT JOIN image ON Annotation.imageId == image.imageId WHERE body=? AND target=?"
             annotations_with_body_and_target_query = read_sql(query_4,con)
         return annotations_with_body_and_target_query
 
     def getAnnotationsWithTarget(self, targetId): 
         with connect(self.getdbPathOrUrl()) as con: 
-            query_5 = "SELECT annotation,target,body,motivation FROM Annotations LEFT JOIN image ON Annotations.imageId == image.imageId WHERE target=?"
+            query_5 = "SELECT annotation,target,body,motivation FROM Annotation LEFT JOIN image ON Annotation.imageId == image.imageId WHERE target=?"
             annotations_with_target_query = read_sql(query_5,con)
         return annotations_with_target_query
 
