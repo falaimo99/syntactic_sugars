@@ -58,13 +58,14 @@ class AnnotationProcessor(Processor):
             return True
         else:
             return False
-        conn.close()
+        
 
 class MetadataProcessor(Processor):
     def __init__(self, dbPathorUrl):
         super().__init__(dbPathorUrl)
     def uploadData(self, path:str):
         path1 = read_csv(path, keep_default_na=False, dtype={"id":"string", "creator":"string", "title":"string"})
+        
         creators = metadata[["creator"]]
         for i in creators["creator"]:
             if ";" in i:
@@ -114,6 +115,6 @@ class MetadataProcessor(Processor):
             return True
         else:
             return False
-        conn.close()
+        
          
         
