@@ -1,32 +1,44 @@
 # this is just a test but it may work
 
-class IdentifiableEntity:
-    def __init__(self, identifier):
-        self.id = identifier
-
-    def getIdentifier(self):
+class IdentifiableEntity(object):
+    def __init__(self, id:str):
+        self.id = id
+    def getId(self):
         return self.id
 
-
-class Annotation(IdentifiableEntity):
-    def __init__(self, identifier, body, target, motivation):
-        self.motivation = motivation
-        self.target = target
-        self.body = body
-
-        super().__init__(identifier)
-
-
 class Image(IdentifiableEntity):
-    pass
+    def __init__ (self,id):
+        super().__init__(id)
+
+class Annotation(IdentifiableEntity): 
+    def __init__(self, id, motivation, body:Image, target:IdentifiableEntity):
+        self.motivation = motivation
+        self.body = body
+        self.target = target
+        super().__init__(id)
+    def getBody(self):
+        return Image
+    def getMotivation(self):
+        return self.motivation
+    def getTarget(self):
+        return IdentifiableEntity
 
 class EntityWithMetadata(IdentifiableEntity):
-    def __init__(self, identifier, label, title, creators):
-        self.label = label
+    def __init__(self, id, label, title, creators:str):
+        self.label = label 
         self.title = title
-        self.creators = creators
-
-        super().__init__(identifier)
+        super().__init__(id)
+        self.creators = list()
+        self.creators.append(creators)
+    def getLabel(self):
+        return self.label
+    def getTitle(self):
+        if len(self.title) == 0:
+            return None
+        else:
+            return self.title
+    def getCreators(self):
+        return self.creators
 
 
 class Canvas(EntityWithMetadata):
