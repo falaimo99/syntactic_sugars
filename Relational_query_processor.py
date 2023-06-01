@@ -19,9 +19,6 @@ class RelationalQueryProcessor(Processor):
     def __init__(self, dbPathOrUrl):
         super().__init__(dbPathOrUrl)
 
-    def uploadData(self, path):
-        pass 
-
     def getAllAnnotations(self):
         with connect(self.getdbPathOrUrl()) as con: 
             query_1 = "SELECT annotation,target,body,motivation FROM Annotations LEFT JOIN image ON Annotations.imageId == image.imageId"
