@@ -1,6 +1,6 @@
 from processor import Processor
 from queryprocessor import QueryProcessor
-from SPARQLWrapper import SPARQLWrapper, JSON
+from SPARQLWrapper import SPARQLWrapper
 from pandas import DataFrame
 
 class TriplestoreQueryProcessor(QueryProcessor):
@@ -10,11 +10,10 @@ class TriplestoreQueryProcessor(QueryProcessor):
     def query_block(self, endpoint, query):
         sparql_df = SPARQLWrapper(endpoint)
         sparql_df.setQuery(query)
-        sparql_df.setReturnFormat(JSON)
-        results = sparql_df.query().convert()
+        results = sparql_df.query()
         return results
 
-    def getAllCanvases(self) -> DataFrame: #should we also return the metadata?  
+    def getAllCanvases(self) -> DataFrame:  
         endpoint = Processor.getdbPathorUrl
         query = """
         
@@ -71,7 +70,7 @@ class TriplestoreQueryProcessor(QueryProcessor):
 
         SELECT ?man_id ?can_id 
         WHERE {
-            ?id a \""""+collectionid+"""\"
+            ?id a '"""+str(collectionid)+"""' ;
                 rdf:type sysu:Collection ;
                 sysu:items ?man_id.
             ?man_id rdf:type sysu:Manifest ; 
@@ -90,7 +89,7 @@ class TriplestoreQueryProcessor(QueryProcessor):
 
         SELECT ?can_id 
         WHERE {
-            ?id a \""""+manifestid+"""\" ;
+            ?id a '"""+str(manifestid)+"""' ;
                 rdf:type sysu:Manifest ;
                 sysu:items ?can_id.
         }
@@ -108,7 +107,7 @@ class TriplestoreQueryProcessor(QueryProcessor):
 
         SELECT ?id ?items ?type 
         WHERE {
-            ?label a \""""+label+"""\" . 
+            ?label a '"""+str(label)+"""' . 
             ?id sysu:label ?label ;
                 rdf:type ?type .
             OPTIONAL {?id sysu:items ?items         
@@ -128,7 +127,7 @@ class TriplestoreQueryProcessor(QueryProcessor):
 
         SELECT ?man_id 
         WHERE {
-            ?id a \""""+collectionid+"""\"
+            ?id a '"""+str(collectionid)+"""'
                 rdf:type sysu:Collection ;
                 sysu:items ?man_id.
 
@@ -137,3 +136,6 @@ class TriplestoreQueryProcessor(QueryProcessor):
         result= self.query_block(endpoint, query)
         return result
     
+grp_endpoint = "http://127.0.0.1:9999/blazegraph/sparql"
+grp_qp = TriplestoreQueryProcessor()
+grp_qp.setdbPathorUrl(grp_endpoint)
