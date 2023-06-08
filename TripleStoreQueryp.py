@@ -1,105 +1,116 @@
-from processor import Processor
 from queryprocessor import QueryProcessor
-from SPARQLWrapper import SPARQLWrapper
-from pandas import DataFrame
+from sparql_dataframe import get
 
 class TriplestoreQueryProcessor(QueryProcessor):
     def __init__(self):
         super().__init__()
+        self.dbPathorUrl = QueryProcessor.setdbPathorUrl
 
-    def query_block(self, endpoint, query):
-        sparql_df = SPARQLWrapper(endpoint)
-        sparql_df.setQuery(query)
-        results = sparql_df.query()
-        return results
+    def getAllCanvases(self):
 
-    def getAllCanvases(self) -> DataFrame:  
-        endpoint = Processor.getdbPathorUrl
+        endpoint = self.dbPathorUrl
+
         query = """
+        PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        PREFIX sysu:  <https://github.com/falaimo99/syntactic_sugars/vocabulary/>
         
-        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-        PREFIX sysu: <https://github.com/falaimo99/syntactic_sugars/vocabulary/>
-
         SELECT ?id
         WHERE {
             ?id rdf:type sysu:Canvas .
-        }
-        
-        """
-        result= self.query_block(endpoint, query)
-        return result
-    
-    def getAllCollections(self) -> DataFrame:
-        endpoint = Processor.getdbPathorUrl
-        query = """
-        
-        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-        PREFIX sysu: <https://github.com/falaimo99/syntactic_sugars/vocabulary/>
+            }
 
+        """
+
+        df_canvases = get(endpoint, query, True)
+        
+        return df_canvases
+    
+    def getAllCollections(self):
+
+        endpoint = self.dbPathorUrl
+
+        query = """
+        PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        PREFIX sysu:  <https://github.com/falaimo99/syntactic_sugars/vocabulary/>
+        
         SELECT ?id
         WHERE {
             ?id rdf:type sysu:Collection .
         }
-        
+
         """
-        result= self.query_block(endpoint, query)
-        return result      
 
-    def getAllManifests(self) -> DataFrame:
-        endpoint = Processor.getdbPathorUrl
+        df_collections = get(endpoint, query, True)
+    
+        return df_collections
+
+    def getAllManifests(self):
+
+        endpoint = self.dbPathorUrl
+
         query = """
-        
-        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-        PREFIX sysu: <https://github.com/falaimo99/syntactic_sugars/vocabulary/>
-
+        PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        PREFIX sysu:  <https://github.com/falaimo99/syntactic_sugars/vocabulary/>
+       
         SELECT ?id
         WHERE {
             ?id rdf:type sysu:Manifest .
         }
-        
-        """
-        result= self.query_block(endpoint, query)
-        return result
 
-    def getCanvasesInCollection(self, collectionid: str) -> DataFrame:
-        endpoint = Processor.getdbPathorUrl
-        query = """
+        """
+
+        df_manifests = get(endpoint, query, True)
         
-        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-        PREFIX sysu: <https://github.com/falaimo99/syntactic_sugars/vocabulary/>
+        return df_manifests
+    
+    def getCanvasesInCollection(self, collectionid: str):
+
+        endpoint = self.dbPathorUrl
+
+        query = """
+        PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        PREFIX sysu:  <https://github.com/falaimo99/syntactic_sugars/vocabulary/>
 
         SELECT ?man_id ?can_id 
         WHERE {
-            ?id a '"""+str(collectionid)+"""' ;
+            ?id a <%s> ;
                 rdf:type sysu:Collection ;
                 sysu:items ?man_id.
             ?man_id rdf:type sysu:Manifest ; 
                 sysu:items ?can_id .
         }
-        """
-        result= self.query_block(endpoint, query)
-        return result
 
-    def getCanvasesInManifest(self, manifestid: str) -> DataFrame:
-        endpoint = Processor.getdbPathorUrl
-        query = """
+        """%(str(collectionid))
+
+        df_canvasesincollection = get(endpoint, query, True)
         
-        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-        PREFIX sysu: <https://github.com/falaimo99/syntactic_sugars/vocabulary/>
+        return df_canvasesincollection
+    
+    def getCanvasesInManifest(self, manifestid: str):
 
-        SELECT ?can_id 
+        endpoint = self.dbPathorUrl
+
+        query = """
+        PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        PREFIX sysu:  <https://github.com/falaimo99/syntactic_sugars/vocabulary/>
+
+       SELECT ?can_id 
         WHERE {
-            ?id a '"""+str(manifestid)+"""' ;
+            ?id a <%s> ;
                 rdf:type sysu:Manifest ;
                 sysu:items ?can_id.
         }
-        """
+
+        """%(str(manifestid))
+
+        df_canvasesinmanifest = get(endpoint, query, True)
         
-        result= self.query_block(endpoint, query)
-        return result
+        return df_canvasesinmanifest
     
-    def getEntitiesWithLabel(self, label:str) -> DataFrame:
-        endpoint = Processor.getdbPathorUrl
+    def getEntitiesWithLabel(self, label:str):
+        
+        endpoint = self.dbPathorUrl
+
         query = """
         
         PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -107,34 +118,39 @@ class TriplestoreQueryProcessor(QueryProcessor):
 
         SELECT ?id ?items ?type 
         WHERE {
-            ?label a '"""+str(label)+"""' . 
+            ?label a <%s> . 
             ?id sysu:label ?label ;
                 rdf:type ?type .
             OPTIONAL {?id sysu:items ?items         
             } 
 
         }
-        """
-        result= self.query_block(endpoint, query)
-        return result
-
-    def getManifestsInCollection(self, collectionid: str) -> DataFrame:
-        endpoint = Processor.getdbPathorUrl
-        query = """
+        """%(str(label))
         
-        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-        PREFIX sysu: <https://github.com/falaimo99/syntactic_sugars/vocabulary/>
+        df_entitieswithlabel = get(endpoint, query, True)
+        
+        return df_entitieswithlabel
+    
+    def getManifestsInCollection(self, collectionid: str):
+
+        endpoint = self.dbPathorUrl
+
+        query = """
+        PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        PREFIX sysu:  <https://github.com/falaimo99/syntactic_sugars/vocabulary/>
 
         SELECT ?man_id 
         WHERE {
-            ?id a '"""+str(collectionid)+"""'
+            ?id a <%s>;
                 rdf:type sysu:Collection ;
                 sysu:items ?man_id.
 
         }
-        """
-        result= self.query_block(endpoint, query)
-        return result
+        """%(str(collectionid))
+
+        df_manifestsincollection = get(endpoint, query, True)
+        
+        return df_manifestsincollection
     
 grp_endpoint = "http://127.0.0.1:9999/blazegraph/sparql"
 grp_qp = TriplestoreQueryProcessor()
