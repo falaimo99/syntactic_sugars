@@ -24,12 +24,11 @@ class Annotation(IdentifiableEntity):
         return IdentifiableEntity
 
 class EntityWithMetadata(IdentifiableEntity):
-    def __init__(self, id, label, title, creators:str):
+    def __init__(self, id, label, title, creators):
         self.label = label 
         self.title = title
+        self.creators = creators
         super().__init__(id)
-        self.creators = list()
-        self.creators.append(creators)
     def getLabel(self):
         return self.label
     def getTitle(self):
@@ -38,9 +37,16 @@ class EntityWithMetadata(IdentifiableEntity):
         else:
             return self.title
     def getCreators(self):
-        return self.creators
+        if len(self.creators) == 0:
+            return None
+        elif ";" in self.creators:
+            list_creators = self.creators.split("; ")
+            return list_creators
+        else:
+            list_creators.append(self.creators)
+            return list_creators
 
-
+        
 class Canvas(EntityWithMetadata):
     def __init__(self, identifier, label, title, creators):
         super().__init__(identifier, label, title, creators)
