@@ -5,23 +5,22 @@ import re
 pd.options.mode.chained_assignment = None
 
 class Processor(object): 
-    def __init__(self, dbPathOrUrl):
-        self.dbPathOrUrl = dbPathOrUrl
-        self.dbPathOrUrl = ""
+    def __init__(self):
+        self.DbPathOrUrl = ""
         
     def setDbPathOrUrl(self, new_path):
-        self.dbPathOrUrl= new_path
+        self.DbPathOrUrl= new_path
         if new_path:
             return True 
         else: 
             return False
     def getDbPathOrUrl(self):
-        return self.dbPathOrUrl
+        return self.DbPathOrUrl
 
 
 class AnnotationProcessor(Processor): 
-    def __init__(self, dbPathOrUrl):
-        super().__init__(dbPathOrUrl)
+    def __init__(self):
+        super().__init__()
 
     def uploadData(self, path:str):
         
@@ -43,11 +42,11 @@ class AnnotationProcessor(Processor):
         annotations_ids.insert(0, "annotationsId", Series(annotations_internal_id, dtype="string"))
         annotations_ids = annotations_ids.join(image_ids["imageId"]) 
 
-        with connect(self.dbPathOrUrl) as con:   
+        with connect(self.DbPathOrUrl) as con:   
             annotations_ids.to_sql("Annotation", con, if_exists="replace", index=False)
             image_ids.to_sql("Image", con, if_exists="replace", index=False) 
 
-        conn = connect(self.dbPathOrUrl)
+        conn = connect(self.DbPathOrUrl)
         cursor = conn.cursor()
 
         a = cursor.execute("SELECT name FROM sqlite_schema WHERE type='table' AND name='Annotation'")
@@ -58,15 +57,18 @@ class AnnotationProcessor(Processor):
             return True
         else:
             return False
+annotation_p = AnnotationProcessor()
+annotation_p.setDbPathOrUrl("relational.db")
+annotation_p.uploadData("data/annotations.csv")
         
 
 class MetadataProcessor(Processor):
-    def __init__(self, dbPathorUrl):
-        super().__init__(dbPathorUrl)
+    def __init__(self):
+        super().__init__()
     def uploadData(self, path:str):
         path1 = read_csv(path, keep_default_na=False, dtype={"id":"string", "creator":"string", "title":"string"})
         
-        creators = metadata[["creator"]]
+        creators = path1[["creator"]]
         for i in creators["creator"]:
             if ";" in i:
                 creators["creator"] = creators["creator"].str.split(r";\s") 
@@ -100,11 +102,11 @@ class MetadataProcessor(Processor):
             metadata_id.append("metadata-" + str(idx))
         metadata.insert(0, "metadata_internal_id", Series(metadata_id, dtype="string"))
 
-        with connect(self.dbPathOrUrl) as con:   
+        with connect(self.DbPathOrUrl) as con:   
             metadata.to_sql("EntityWithMetadata", con, if_exists="replace", index=False)
             creators.to_sql("creators_table", con, if_exists="replace", index=False) 
         
-        conn = connect(self.dbPathOrUrl)
+        conn = connect(self.DbPathOrUrl)
         cursor = conn.cursor()
 
         a = cursor.execute("SELECT name FROM sqlite_schema WHERE type='table' AND name='EntityWithMetadata'")
@@ -115,6 +117,10 @@ class MetadataProcessor(Processor):
             return True
         else:
             return False
+metadata_p = MetadataProcessor()
+metadata_p.setDbPathOrUrl("relational.db")
+metadata_p.uploadData("data/metadata.csv") 
+
         
          
         
