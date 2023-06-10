@@ -4,11 +4,11 @@ from sparql_dataframe import get
 class TriplestoreQueryProcessor(QueryProcessor):
     def __init__(self):
         super().__init__()
-        self.dbPathorUrl = QueryProcessor.setdbPathorUrl
+        self.DbPathorUrl = QueryProcessor.setDbPathorUrl
 
     def getAllCanvases(self):
 
-        endpoint = self.dbPathorUrl
+        endpoint = self.DbPathorUrl
 
         query = """
         PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -27,7 +27,7 @@ class TriplestoreQueryProcessor(QueryProcessor):
     
     def getAllCollections(self):
 
-        endpoint = self.dbPathorUrl
+        endpoint = self.DbPathorUrl
 
         query = """
         PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -46,7 +46,7 @@ class TriplestoreQueryProcessor(QueryProcessor):
 
     def getAllManifests(self):
 
-        endpoint = self.dbPathorUrl
+        endpoint = self.DbPathorUrl
 
         query = """
         PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -65,7 +65,7 @@ class TriplestoreQueryProcessor(QueryProcessor):
     
     def getCanvasesInCollection(self, collectionid: str):
 
-        endpoint = self.dbPathorUrl
+        endpoint = self.DbPathorUrl
 
         query = """
         PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -88,7 +88,7 @@ class TriplestoreQueryProcessor(QueryProcessor):
     
     def getCanvasesInManifest(self, manifestid: str):
 
-        endpoint = self.dbPathorUrl
+        endpoint = self.DbPathorUrl
 
         query = """
         PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -109,7 +109,7 @@ class TriplestoreQueryProcessor(QueryProcessor):
     
     def getEntitiesWithLabel(self, label:str):
         
-        endpoint = self.dbPathorUrl
+        endpoint = self.DbPathorUrl
 
         query = """
         
@@ -133,7 +133,7 @@ class TriplestoreQueryProcessor(QueryProcessor):
     
     def getManifestsInCollection(self, collectionid: str):
 
-        endpoint = self.dbPathorUrl
+        endpoint = self.DbPathorUrl
 
         query = """
         PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -154,4 +154,4 @@ class TriplestoreQueryProcessor(QueryProcessor):
     
 grp_endpoint = "http://127.0.0.1:9999/blazegraph/sparql"
 grp_qp = TriplestoreQueryProcessor()
-grp_qp.setdbPathorUrl(grp_endpoint)
+grp_qp.setDbPathorUrl(grp_endpoint)
