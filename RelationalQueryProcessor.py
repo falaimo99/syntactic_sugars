@@ -1,7 +1,6 @@
 from sqlite3 import connect
 from pandas import read_csv, Series, DataFrame, read_sql
 import pandas as pd
-import unittest
 pd.options.mode.chained_assignment = None
 
 class Processor(object): 
