@@ -7,12 +7,12 @@ from sparql_dataframe import get
 class QueryProcessor(Processor):
     def __init__(self):
         super(Processor).__init__()
-        self.dbPathorUrl = Processor.setdbPathorUrl
+        self.DbPathorUrl = Processor.setDbPathorUrl
     
     def getEntitybyId(self, id):
 
         def getfromGraph(id):
-            endpoint = self.dbPathorUrl
+            endpoint = self.DbPathorUrl
 
             query = "PREFIX sysu:<https://github.com/falaimo99/syntactic_sugars/vocabulary/> select ?e where {%s sysu:id ?e}"%(id)
 
