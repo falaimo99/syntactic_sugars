@@ -46,7 +46,7 @@ class GenericQueryProcessor():
                     annotation = Annotation(id=row['annotation'], motivation=row['motivation'], body=row['body'], target=row['target'])
                     annotations.append(annotation)
                 
-            return annotations
+                return annotations
     
     def getallCanvas(self):
         for queryprocessor in self.queryProcessors:
@@ -70,7 +70,91 @@ class GenericQueryProcessor():
             
         df = pd.concat([canvas_df, label_df], axis=1)
         pd.set_option("display.expand_frame_repr", False)
-        return tabloo.show(df)
+        print(df)
+
+    def getAllImages(self):    
+        for queryprocessor in self.queryProcessors:
+            if queryprocessor is RelationalQueryProcessor():    
+                df = queryprocessor.getAllImages()
+                images = []
+                for x, row in df.iterrows():
+                    image = Image(id=row['body'])
+                    images.append(image)
+                
+                return images
+            
+    def getAnnotationsToCanvas(self, target):
+        for queryprocessor in self.queryProcessors:
+            if isinstance(queryprocessor, RelationalQueryProcessor):   
+                with connect(queryprocessor.DbPathOrUrl) as con:
+                    query = "SELECT * FROM Annotation LEFT JOIN image ON Annotation.imageId == image.imageId WHERE target=?"
+                    df = read_sql(query, con, params=(target,))
+                atc = []
+                for x, row in df.iterrows():
+                    annotation = Annotation(id=row['annotation'], motivation=row['motivation'], body=row['body'], target=row['target'])
+                    atc.append(annotation)
+                
+                return atc
+    
+    def getAnnotationsWithBody(self):    
+        for queryprocessor in self.queryProcessors:
+            if queryprocessor is RelationalQueryProcessor():    
+                df = queryprocessor.getAnnotationsWithBody()
+                annotations_body = []
+                for x, row in df.iterrows():
+                    annotation = Annotation(id=row['annotation'], motivation=row['motivation'], body=row['body'], target=row['target'])
+                    annotations_body.append(annotation)
+                
+                return annotations_body
+    
+    def getAnnotationsWithBodyandTarget(self):    
+        for queryprocessor in self.queryProcessors:
+            if queryprocessor is RelationalQueryProcessor():    
+                df = queryprocessor.getAnnotationsWithBodyandTarget()
+                annotations_bt = []
+                for x, row in df.iterrows():
+                    annotation = Annotation(id=row['annotation'], motivation=row['motivation'], body=row['body'], target=row['target'])
+                    annotations_bt.append(annotation)
+                
+                return annotations_bt
+        
+    def getAnnotationsWithTarget(self):    
+        for queryprocessor in self.queryProcessors:
+            if queryprocessor is RelationalQueryProcessor():    
+                df = queryprocessor.getAnnotationsWithTarget()
+                annotations_t = []
+                for x, row in df.iterrows():
+                    annotation = Annotation(id=row['annotation'], motivation=row['motivation'], body=row['body'], target=row['target'])
+                    annotations_t.append(annotation)
+                
+                return annotations_t
+            
+    def getEntitiesWithCreator(self):    #manca il label che è da ricevere attraverso sparql query
+        for queryprocessor in self.queryProcessors:
+            if isinstance(queryprocessor, TriplestoreQueryProcessor):
+                pass
+            if isinstance(queryprocessor, RelationalQueryProcessor):  
+                df = queryprocessor.getEntitiesWithCreator()
+                ewc = []
+                for x, row in df.iterrows():
+                    entity = EntityWithMetadata(id=row['id'], label=row['label'], title=row['title'], creators=row['creators'])
+                    ewc.append(entity)
+                
+                return ewc
+            
+    def getImagesAnnotatingCanvas(self, target):
+        for queryprocessor in self.queryProcessors:
+            if isinstance(queryprocessor, RelationalQueryProcessor):   
+                with connect(queryprocessor.DbPathOrUrl) as con:
+                    query = "SELECT body FROM  Annotation LEFT JOIN image ON Annotation.imageId == image.imageId WHERE target=?"
+                    df = read_sql(query, con, params=(target,))
+                img_a = []
+                for x, row in df.iterrows():
+                    image = Image(id=row['body'])
+                    img_a.append(image)
+                
+                return img_a
+        
 
 
 
@@ -85,6 +169,6 @@ g_qp = GenericQueryProcessor()
 g_qp.addQueryProcessors(r_qp)
 g_qp.addQueryProcessors(t_qp)
 
-g_qp.getallCanvas()
+g_qp.getAnnotationsToCanvas('https://dl.ficlit.unibo.it/iiif/2/28429/canvas/p8')
 
 
