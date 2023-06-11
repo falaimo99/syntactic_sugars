@@ -1,13 +1,13 @@
 # This is a subclass of Processor, it serves the purpose of returning a
 # dataframe containing 
 
-from processor import Processor
+from Processor import Processor
 from sparql_dataframe import get
 
 class QueryProcessor(Processor):
     def __init__(self):
         super(Processor).__init__()
-        self.DbPathorUrl = Processor.setDbPathorUrl
+        self.DbPathOrUrl = Processor.setDbPathOrUrl
     
     def getEntitybyId(self, id):
 
