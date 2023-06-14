@@ -52,7 +52,24 @@ class RelationalQueryProcessor(QueryProcessor):
             query_7 = "SELECT  DISTINCT * FROM EntityWithMetadata WHERE title=?"
             entities_with_title_query = read_sql(query_7,con,params=(title,))
         return entities_with_title_query
+    
+    def getEntitiesCanvas(self): 
+        with connect(self.DbPathOrUrl) as con: 
+            query_8 = "SELECT DISTINCT id,creators,title FROM EntityWithMetadata WHERE id LIKE '%canvas%'"
+            entities_c_query = read_sql(query_8, con)
+        return entities_c_query
+    
+    def getEntitiesManifest(self): 
+        with connect(self.DbPathOrUrl) as con: 
+            query_9 = "SELECT DISTINCT id,creators,title FROM EntityWithMetadata WHERE id LIKE '%manifest%'"
+            entities_m_query = read_sql(query_9, con)
+        return entities_m_query
 
+    def getEntitiesCollection(self): 
+        with connect(self.DbPathOrUrl) as con: 
+            query_10 = "SELECT DISTINCT id,creators,title FROM EntityWithMetadata WHERE id LIKE '%collection%'"
+            entities_col_query = read_sql(query_10, con)
+        return entities_col_query
+    
 relational_p = RelationalQueryProcessor()
 relational_p.setDbPathOrUrl("relational.db")
-print(relational_p.getAllAnnotations())
