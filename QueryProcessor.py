@@ -1,8 +1,7 @@
-# This is a subclass of Processor, it serves the purpose of returning a
-# dataframe containing 
-
 from Processor import Processor
 from sparql_dataframe import get
+from sqlite3 import connect
+import pandas as pd
 
 class QueryProcessor(Processor):
     def __init__(self):
@@ -10,21 +9,31 @@ class QueryProcessor(Processor):
         self.DbPathOrUrl = Processor.setDbPathOrUrl
     
     def getEntitybyId(self, id):
-
-        def getfromGraph(id):
-            endpoint = self.DbPathorUrl
-
-            query = "PREFIX sysu:<https://github.com/falaimo99/syntactic_sugars/vocabulary/> select ?e where {%s sysu:id ?e}"%(id)
-
-            df_sparql = get(endpoint, query, True)
+        if ".db" in self.DbPathOrUrl[3:]:
+            with connect(self.DbPathOrUrl) as con:
+                annotation_query = "SELECT annotation,target,body,motivation FROM Annotation LEFT JOIN image ON Annotation.imageId == image.imageId WHERE annotation=?"
+                annotation_df = pd.read_sql(annotation_query, con, params=(id,))
+            if not annotation_df.empty:
+                return annotation_df
+            with connect(self.DbPathOrUrl) as con:
+                image_query = "SELECT body FROM image WHERE body=?"
+                image_df = pd.read_sql(image_query, con, params=(id,))
+            if not image_df.empty:
+                return image_df
             
-            return df_sparql
-        
-        def getfromTabular():
-            #insert code for tabular data
-            ###
-            pass
+        if "http://" and "blazegraph" and "sparql" in self.DbPathOrUrl:
+            query = """
+            PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+            PREFIX sysu:  <https://github.com/falaimo99/syntactic_sugars/vocabulary/>
 
-        return getfromGraph(id)
-        return getfromTabular()
-    
+            select ?id ?label ?int_id ?type where{
+                ?id rdf:type ?type .
+                ?id sysu:label ?label .
+                ?id sysu:id ?int_id
+                FILTER(?id=<%s>)
+            }
+            """%(str(id))
+
+            sparql_df = get(self.DbPathOrUrl, query, True)
+
+            return sparql_df   
