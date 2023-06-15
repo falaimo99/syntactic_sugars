@@ -1,22 +1,9 @@
 from sqlite3 import connect
 from pandas import read_csv, Series, DataFrame
 import pandas as pd
+from Processor import Processor
 import re
 pd.options.mode.chained_assignment = None
-
-class Processor(object): 
-    def __init__(self):
-        self.DbPathOrUrl = ""
-        
-    def setDbPathOrUrl(self, new_path):
-        self.DbPathOrUrl= new_path
-        if new_path:
-            return True 
-        else: 
-            return False
-    def getDbPathOrUrl(self):
-        return self.DbPathOrUrl
-
 
 class AnnotationProcessor(Processor): 
     def __init__(self):
@@ -74,10 +61,10 @@ class MetadataProcessor(Processor):
                 if z not in list_1:
                         list_1.append(z)
                         creator_internal_id.append("creator-" + str(list_1.index(z)))
-        else:
-            for i in list_1:
-                if z == i:
-                    creator_internal_id.append("creator-" + str(list_1.index(i)))
+                else:
+                    for i in list_1:
+                        if z == i:
+                            creator_internal_id.append("creator-" + str(list_1.index(i)))
         creators.insert(0,"creatorId", Series(creator_internal_id, dtype= "string")) 
         
         metadata = path1[["id", "title","creator"]]
