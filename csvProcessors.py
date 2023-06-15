@@ -3,6 +3,7 @@ from pandas import read_csv, Series, DataFrame
 import pandas as pd
 from Processor import Processor
 import re
+
 pd.options.mode.chained_assignment = None
 
 class AnnotationProcessor(Processor): 
@@ -36,11 +37,8 @@ class AnnotationProcessor(Processor):
         if annotations_ids.empty and image_ids.empty:
              return False
         else:
-             return True 
-annotation_p = AnnotationProcessor()
-annotation_p.setDbPathOrUrl("relational.db")
-annotation_p.uploadData("data/annotations.csv")
-        
+             return True         
+
 
 class MetadataProcessor(Processor):
     def __init__(self):
@@ -68,13 +66,14 @@ class MetadataProcessor(Processor):
         creators.insert(0,"creatorId", Series(creator_internal_id, dtype= "string")) 
         
         metadata = path1[["id", "title","creator"]]
+        metadata = metadata.rename(columns={"creator":"creators"})
         for index, row in metadata.iterrows():
                 for item_idx, item in row.items():
                         if item_idx =="creator":
                                 if ";" in item:
                                         row_to_copy = metadata.loc[index:index]  
                                         metadata = pd.concat([metadata.loc[:index], row_to_copy, metadata.loc[index+1:]]).reset_index(drop=True)
-        metadata = metadata.drop(["creator"], axis = 1)          
+        # metadata = metadata.drop(["creators"], axis = 1)      
         metadata = metadata.join(creators["creatorId"])  
                                 
         metadata_id = []
@@ -90,12 +89,3 @@ class MetadataProcessor(Processor):
              return False
         else:
              return True 
-        
-metadata_p = MetadataProcessor()
-metadata_p.setDbPathOrUrl("relational.db")
-metadata_p.uploadData("data/metadata.csv")
-
-
-        
-         
-        

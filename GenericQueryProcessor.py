@@ -15,7 +15,7 @@ class GenericQueryProcessor():
         if not self.queryProcessors:
             return True
 
-    def addQueryProcessors(self, processor):
+    def addQueryProcessor(self, processor):
         self.queryProcessors.append(processor)
         if processor in self.queryProcessors:
             return True
@@ -67,12 +67,23 @@ class GenericQueryProcessor():
         collections = []
 
         for x, row in df.iterrows():
-            collection = Collection(id=row['collection'], label=row['label'], title=row['title'], creators=['creators'], items=self.getManifestInCollection(row['collection']))
+            collection = Collection(id=row['collection'], label=row['label'], title=row['title'], creators=['creators'], items=self.getManifestsInCollection(row['collection']))
             collections.append(collection)
 
         return collections
+    
+    def getAllImages(self):
+        for queryprocessor in self.queryProcessors:
+            if isinstance(queryprocessor, RelationalQueryProcessor):
+                df = queryprocessor.getAllImages()
+                images = []
+                for x, row in df.iterrows():
+                    image = Image(id=row['body'])
+                    images.append(image)
+                
+                return images
 
-    def getAllManifest(self):
+    def getAllManifests(self):
         for queryprocessor in self.queryProcessors:
             if isinstance(queryprocessor, TriplestoreQueryProcessor):
                 triplestore_df = queryprocessor.getAllManifests()
@@ -95,16 +106,6 @@ class GenericQueryProcessor():
 
         return manifests
     
-    def getAllImages(self):
-        for queryprocessor in self.queryProcessors:
-            if isinstance(queryprocessor, RelationalQueryProcessor):
-                df = queryprocessor.getAllImages()
-                images = []
-                for x, row in df.iterrows():
-                    image = Image(id=row['body'])
-                    images.append(image)
-                
-                return images
     
     def getAnnotationsToCanvas(self, target):
         for queryprocessor in self.queryProcessors:
@@ -118,18 +119,6 @@ class GenericQueryProcessor():
                 
                 return atc
     
-    def getAnnotationsToManifest(self, target):
-        for queryprocessor in self.queryProcessors:
-            if isinstance(queryprocessor, RelationalQueryProcessor):
-              df = queryprocessor.getAnnotationsWithTarget(target)
-
-            atm = []
-            for x, row in df.iterrows():
-                annotation = Annotation(id=row['annotation'], motivation=row['motivation'], body=Image(row['body']), target=self.getEntityById(row['target']))
-                atm.append(annotation)
-            
-            return atm
-        
     def getAnnotationsToCollection(self, target):
         for queryprocessor in self.queryProcessors:
             if isinstance(queryprocessor, RelationalQueryProcessor):
@@ -141,6 +130,18 @@ class GenericQueryProcessor():
                 atc.append(annotation)
             
             return atc
+        
+    def getAnnotationsToManifest(self, target):
+        for queryprocessor in self.queryProcessors:
+            if isinstance(queryprocessor, RelationalQueryProcessor):
+              df = queryprocessor.getAnnotationsWithTarget(target)
+
+            atm = []
+            for x, row in df.iterrows():
+                annotation = Annotation(id=row['annotation'], motivation=row['motivation'], body=Image(row['body']), target=self.getEntityById(row['target']))
+                atm.append(annotation)
+            
+            return atm
         
     def getAnnotationsWithBody(self, body):
         for queryprocessor in self.queryProcessors:
@@ -185,13 +186,13 @@ class GenericQueryProcessor():
             
             cic = []
 
-            for canvas in self.getAllCanvas():
-                for id in df['id']:
-                    if id == canvas.getId():
-                        cic.append(canvas)
-            
-            return cic
+        for canvas in self.getAllCanvas():
+            for id in df['id']:
+                if id == canvas.getId():
+                    cic.append(canvas)
         
+        return cic
+    
     def getCanvasesInManifest(self, manifest):
         for queryprocessor in self.queryProcessors:
             if isinstance(queryprocessor, TriplestoreQueryProcessor):
@@ -199,12 +200,12 @@ class GenericQueryProcessor():
 
             cim = []
 
-            for manifest in self.getAllCanvas():
-                for id in df['id']:
-                    if id == manifest.getId():
-                        cim.append(manifest)
-            
-            return cim
+        for manifest in self.getAllCanvas():
+            for id in df['id']:
+                if id == manifest.getId():
+                    cim.append(manifest)
+        
+        return cim
             
     def getEntityById(self, id:str):
         if 'annotation' in id:    
@@ -220,7 +221,7 @@ class GenericQueryProcessor():
                 if id == canvas.getId():
                     return canvas
         elif 'manifest' in id:
-            for manifest in self.getAllManifest():
+            for manifest in self.getAllManifests():
                 if id == manifest.getId():
                     return manifest
         elif 'collection' in id:      
@@ -281,29 +282,15 @@ class GenericQueryProcessor():
 
         return iac
     
-    def getManifestInCollection(self, collection):
+    def getManifestsInCollection(self, collection):
         for queryprocessor in self.queryProcessors:
             if isinstance(queryprocessor, TriplestoreQueryProcessor):
                 df = queryprocessor.getManifestsInCollection(collection)
             mic = []
 
-            for manifest in self.getAllManifest():
-                for collection in df['id']:
-                    if collection == manifest.getId():
-                        mic.append(manifest)
-            
-            return mic
-
-tqp = TriplestoreQueryProcessor()
-tqp.setDbPathOrUrl('http://127.0.0.1:9999/blazegraph/sparql')
-
-rqp = RelationalQueryProcessor()
-rqp.setDbPathOrUrl('relational.db')
-
-gqp = GenericQueryProcessor()
-gqp.addQueryProcessors(tqp)
-gqp.addQueryProcessors(rqp)
-
-
-
-
+        for manifest in self.getAllManifests():
+            for collection in df['id']:
+                if collection == manifest.getId():
+                    mic.append(manifest)
+        
+        return mic

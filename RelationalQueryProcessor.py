@@ -69,6 +69,3 @@ class RelationalQueryProcessor(QueryProcessor):
             query_10 = "SELECT DISTINCT id,creators,title FROM EntityWithMetadata WHERE id LIKE '%collection%'"
             entities_col_query = read_sql(query_10, con)
         return entities_col_query
-    
-relational_p = RelationalQueryProcessor()
-relational_p.setDbPathOrUrl("relational.db")

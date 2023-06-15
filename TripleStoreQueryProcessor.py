@@ -111,6 +111,24 @@ class TriplestoreQueryProcessor(QueryProcessor):
         
         return df_canvasesinmanifest
     
+    def getEntitiesWithLabel(self, label):
+
+        endpoint = self.DbPathOrUrl
+
+        query ="""
+        PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        PREFIX sysu:  <https://github.com/falaimo99/syntactic_sugars/vocabulary/>
+        select ?id ?label ?type where{
+            ?id sysu:label ?label .
+          	?id rdf:type ?type .
+            FILTER(?label="%s")
+        }
+        """%(str(label))
+
+        df_entitieswithlabel = get(endpoint,query,True)
+        
+        return df_entitieswithlabel
+    
     def getManifestsInCollection(self, collection):
 
         endpoint = self.DbPathOrUrl
@@ -131,23 +149,3 @@ class TriplestoreQueryProcessor(QueryProcessor):
         df_manifestsincollection = get(endpoint, query, True)
         
         return df_manifestsincollection
-    
-    def getEntitiesWithLabel(self, label):
-
-        endpoint = self.DbPathOrUrl
-
-        query_2 ="""
-        PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-        PREFIX sysu:  <https://github.com/falaimo99/syntactic_sugars/vocabulary/>
-        select ?id ?label ?type where{
-            ?id sysu:label ?label .
-          	?id rdf:type ?type .
-            FILTER(?label="%s")
-        }
-        """%(str(label))
-
-        return get(endpoint,query_2,True)
-    
-tqp =TriplestoreQueryProcessor()
-tqp.setDbPathOrUrl('http://127.0.0.1:9999/blazegraph/sparql')
-print(tqp.getEntitiesWithLabel("BO0451_CAM6537_0002_contropiatto anteriore.jpg"))

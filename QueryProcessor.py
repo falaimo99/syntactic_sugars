@@ -8,18 +8,24 @@ class QueryProcessor(Processor):
         super(Processor).__init__()
         self.DbPathOrUrl = Processor.setDbPathOrUrl
     
-    def getEntitybyId(self, id):
-        if ".db" in self.DbPathOrUrl[3:]:
+    def getEntityById(self, id):
+        if self.DbPathOrUrl.endswith(".db"):
             with connect(self.DbPathOrUrl) as con:
                 annotation_query = "SELECT annotation,target,body,motivation FROM Annotation LEFT JOIN image ON Annotation.imageId == image.imageId WHERE annotation=?"
                 annotation_df = pd.read_sql(annotation_query, con, params=(id,))
-            if not annotation_df.empty:
-                return annotation_df
+
             with connect(self.DbPathOrUrl) as con:
                 image_query = "SELECT body FROM image WHERE body=?"
                 image_df = pd.read_sql(image_query, con, params=(id,))
-            if not image_df.empty:
+
+            if not annotation_df.empty:
+                return annotation_df
+            
+            elif not image_df.empty:
                 return image_df
+            
+            else:
+                return pd.DataFrame()
             
         if "http://" and "blazegraph" and "sparql" in self.DbPathOrUrl:
             query = """
