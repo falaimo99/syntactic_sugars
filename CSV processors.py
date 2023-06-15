@@ -46,17 +46,10 @@ class AnnotationProcessor(Processor):
             annotations_ids.to_sql("Annotation", con, if_exists="replace", index=False)
             image_ids.to_sql("Image", con, if_exists="replace", index=False) 
 
-        conn = connect(self.DbPathOrUrl)
-        cursor = conn.cursor()
-
-        a = cursor.execute("SELECT name FROM sqlite_schema WHERE type='table' AND name='Annotation'")
-        a = cursor.fetchone()
-        b = cursor.execute("SELECT name FROM sqlite_schema WHERE type='table' AND name='Image'")
-        b = cursor.fetchone()
-        if 'Annotation' in a and 'Image' in b:
-            return True
+        if annotations_ids.empty and image_ids.empty:
+             return False
         else:
-            return False
+             return True 
 annotation_p = AnnotationProcessor()
 annotation_p.setDbPathOrUrl("relational.db")
 annotation_p.uploadData("data/annotations.csv")
@@ -106,20 +99,15 @@ class MetadataProcessor(Processor):
             metadata.to_sql("EntityWithMetadata", con, if_exists="replace", index=False)
             creators.to_sql("creators_table", con, if_exists="replace", index=False) 
         
-        conn = connect(self.DbPathOrUrl)
-        cursor = conn.cursor()
-
-        a = cursor.execute("SELECT name FROM sqlite_schema WHERE type='table' AND name='EntityWithMetadata'")
-        a = cursor.fetchone()
-        b = cursor.execute("SELECT name FROM sqlite_schema WHERE type='table' AND name='creators_table'")
-        b = cursor.fetchone()
-        if 'EntityWithMetadata' in a and 'creators_table' in b: 
-            return True
+        if metadata.empty and creators.empty:
+             return False
         else:
-            return False
+             return True 
+        
 metadata_p = MetadataProcessor()
 metadata_p.setDbPathOrUrl("relational.db")
-metadata_p.uploadData("data/metadata.csv") 
+metadata_p.uploadData("data/metadata.csv")
+
 
         
          
