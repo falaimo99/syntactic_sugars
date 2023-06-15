@@ -12,10 +12,11 @@ class TriplestoreQueryProcessor(QueryProcessor):
         query = """
         PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         PREFIX sysu:  <https://github.com/falaimo99/syntactic_sugars/vocabulary/>
-        select ?e 
+        select ?id ?label 
         where {
         
-            ?e rdf:type sysu:Canvas
+            ?id rdf:type sysu:Canvas .
+            ?id sysu:label ?label
             
             }
 
@@ -27,18 +28,17 @@ class TriplestoreQueryProcessor(QueryProcessor):
     
     def getAllCollections(self):
 
-        endpoint = self.dbPathorUrl
+        endpoint = self.DbPathOrUrl
 
         query = """
         PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         PREFIX sysu:  <https://github.com/falaimo99/syntactic_sugars/vocabulary/>
-        select ?e 
-        where {
-        
-            ?e rdf:type sysu:Collection
-            
-            }
 
+        select ?collection ?label ?items where {
+            ?collection rdf:type sysu:Collection .
+            ?collection sysu:label ?label .
+            ?collection sysu:items ?items
+        } 
         """
 
         df_collections = get(endpoint, query, True)
@@ -47,15 +47,17 @@ class TriplestoreQueryProcessor(QueryProcessor):
 
     def getAllManifests(self):
 
-        endpoint = self.dbPathorUrl
+        endpoint = self.DbPathOrUrl
 
         query = """
         PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         PREFIX sysu:  <https://github.com/falaimo99/syntactic_sugars/vocabulary/>
-        select ?e 
+        select ?manifest ?label ?items
         where {
         
-            ?e rdf:type sysu:Manifest
+            ?manifest rdf:type sysu:Manifest .
+            ?manifest sysu:label ?label .
+            ?manifest sysu:items ?items
             
             }
 
@@ -67,18 +69,18 @@ class TriplestoreQueryProcessor(QueryProcessor):
     
     def getCanvasesInCollection(self, collection):
 
-        endpoint = self.dbPathorUrl
+        endpoint = self.DbPathOrUrl
 
         query = """
         PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         PREFIX sysu:  <https://github.com/falaimo99/syntactic_sugars/vocabulary/>
 
-        select ?e
+        select ?id
         where { 
   
-        <%s> rdf:type sysu:Collection .
-        ?s sysu:items ?o .
-        ?o sysu:items ?e .
+        <%s> sysu:items ?o .
+        ?o sysu:items ?id .
+        ?id sysu:label ?label
   
         } 
 
@@ -90,18 +92,16 @@ class TriplestoreQueryProcessor(QueryProcessor):
     
     def getCanvasesInManifest(self, manifest):
 
-        endpoint = self.dbPathorUrl
+        endpoint = self.DbPathOrUrl
 
         query = """
         PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         PREFIX sysu:  <https://github.com/falaimo99/syntactic_sugars/vocabulary/>
 
-        select ?e
+        select ?id
         where { 
   
-        <%s> rdf:type sysu:Manifest .
-        ?s sysu:items ?o .
-        ?o sysu:items ?e .
+        <%s> sysu:items ?id .
   
         } 
 
@@ -113,17 +113,17 @@ class TriplestoreQueryProcessor(QueryProcessor):
     
     def getManifestsInCollection(self, collection):
 
-        endpoint = self.dbPathorUrl
+        endpoint = self.DbPathOrUrl
 
         query = """
         PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         PREFIX sysu:  <https://github.com/falaimo99/syntactic_sugars/vocabulary/>
 
-        select ?e
+        select ?id
         where {
   
-        <%s> sysu:items ?e .
-        ?e rdf:type sysu:Manifest
+        <%s> sysu:items ?id .
+        ?id rdf:type sysu:Manifest
   
         }
         """%(str(collection))
@@ -131,3 +131,23 @@ class TriplestoreQueryProcessor(QueryProcessor):
         df_manifestsincollection = get(endpoint, query, True)
         
         return df_manifestsincollection
+    
+    def getEntitiesWithLabel(self, label):
+
+        endpoint = self.DbPathOrUrl
+
+        query_2 ="""
+        PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        PREFIX sysu:  <https://github.com/falaimo99/syntactic_sugars/vocabulary/>
+        select ?id ?label ?type where{
+            ?id sysu:label ?label .
+          	?id rdf:type ?type .
+            FILTER(?label="%s")
+        }
+        """%(str(label))
+
+        return get(endpoint,query_2,True)
+    
+tqp =TriplestoreQueryProcessor()
+tqp.setDbPathOrUrl('http://127.0.0.1:9999/blazegraph/sparql')
+print(tqp.getEntitiesWithLabel("BO0451_CAM6537_0002_contropiatto anteriore.jpg"))

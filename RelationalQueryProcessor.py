@@ -1,7 +1,6 @@
 from sqlite3 import connect
 from pandas import read_csv, Series, DataFrame, read_sql
 import pandas as pd
-import unittest
 from QueryProcessor import QueryProcessor
 pd.options.mode.chained_assignment = None
 
@@ -49,7 +48,7 @@ class RelationalQueryProcessor(QueryProcessor):
 
     def getEntitiesWithTitle(self, title): 
         with connect(self.DbPathOrUrl) as con: 
-            query_7 = "SELECT  DISTINCT * FROM EntityWithMetadata WHERE title=?"
+            query_7 = "SELECT DISTINCT id,title,creators FROM EntityWithMetadata WHERE title=?"
             entities_with_title_query = read_sql(query_7,con,params=(title,))
         return entities_with_title_query
     

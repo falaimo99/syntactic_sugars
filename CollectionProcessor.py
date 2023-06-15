@@ -28,7 +28,6 @@ class CollectionProcessor(Processor):
         with open(path, "r", encoding="utf-8") as f:
             json_data = load(f)
             db = Graph()
-            test_list = []
 
             counter_dict = {
             "Collection": 0,
@@ -80,7 +79,7 @@ class CollectionProcessor(Processor):
             # Ancillary function that uploads the data to the endpoint
 
 
-            def counter(db, test_list, json_data, counter_dict):
+            def counter(db, json_data, counter_dict):
 
                 for key, value in json_data.items():
 
@@ -99,6 +98,7 @@ class CollectionProcessor(Processor):
                                 db.add(triple)
 
                             elif value == "Manifest":
+                                counter_dict['Canvas'] = 0
                                 obj = Literal("man-" + str(counter_dict[value]))
                                 triple = (subj, id, obj)
                                 db.add(triple)
@@ -114,7 +114,7 @@ class CollectionProcessor(Processor):
                     if key == "items":
 
                         for dict in value:
-                            counter(db, test_list, dict, counter_dict)
+                            counter(db, dict, counter_dict)
 
 
 
@@ -131,7 +131,8 @@ class CollectionProcessor(Processor):
 
                 store.close()
 
-            counter(db, test_list, json_data, counter_dict)
+
+            counter(db, json_data, counter_dict)
             pop_graph(db, json_data)
             sparql_endpoint(self.DbPathOrUrl)
 
