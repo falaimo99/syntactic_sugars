@@ -57,13 +57,16 @@ class Manifest(EntityWithMetadata):
         super().__init__(id, label, title, creators)
 
     def getItems(self):
-        list_items = []
-        if ";" in self.items:
-            list_items = self.items.split("; ")
-            return list_items
+        if isinstance(self.items, list):
+            return self.items
         else:
-            list_items.append(self.items)
-            return list_items
+            list_items = []
+            if ";" in self.items:
+                list_items = self.items.split("; ")
+                return list_items
+            else:
+                list_items.append(self.items)
+                return list_items
 
 class Collection(EntityWithMetadata):
     def __init__(self, id, label, title, creators, items):
@@ -71,10 +74,13 @@ class Collection(EntityWithMetadata):
         super().__init__(id, label, title, creators)
         
     def getItems(self):
-        list_items = []
-        if ";" in self.items:
-            list_items = self.items.split("; ")
-            return list_items
+        if isinstance(self.items, list):
+            return self.items
         else:
-            list_items.append(self.items)
-            return list_items
+            list_items = []
+            if ";" in self.items:
+                list_items = self.items.split("; ")
+                return list_items
+            else:
+                list_items.append(self.items)
+                return list_items

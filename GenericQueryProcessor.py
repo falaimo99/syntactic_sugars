@@ -1,7 +1,6 @@
 from data_modeling import *
 from TripleStoreQueryProcessor import TriplestoreQueryProcessor
 from RelationalQueryProcessor import RelationalQueryProcessor
-from pandas import read_csv, Series, DataFrame, read_sql
 import pandas as pd
 
 pd.options.display.max_colwidth = 100
@@ -186,7 +185,7 @@ class GenericQueryProcessor():
             if isinstance(queryprocessor, TriplestoreQueryProcessor):
                 df = queryprocessor.getCanvasesInCollection(collection)
             
-            cic = []
+        cic = []
 
         for canvas in self.getAllCanvas():
             for id in df['id']:
@@ -241,9 +240,8 @@ class GenericQueryProcessor():
         ewc = []
 
         for x, row in relational_df.iterrows():
-            for i in relational_df['id']:
-                entity_with_metadata = EntityWithMetadata(id=i, label=self.getEntityById(i).getLabel(), title=row['title'], creators=row['creators'])
-                ewc.append(entity_with_metadata)
+            entity_with_metadata = EntityWithMetadata(id=row['id'], label=self.getEntityById(row['id']).getLabel(), title=row['title'], creators=row['creators'])
+            ewc.append(entity_with_metadata)
 
         return ewc
 
@@ -255,9 +253,8 @@ class GenericQueryProcessor():
         ewc = []
 
         for x, row in triplestore_df.iterrows():
-            for i in triplestore_df['id']:
-                entity_with_metadata = EntityWithMetadata(id=i, label=self.getEntityById(i).getLabel(), title=self.getEntityById(i).getTitle(), creators=self.getEntityById(i).getCreators())
-                ewc.append(entity_with_metadata)
+            entity_with_metadata = EntityWithMetadata(id=row['id'], label=self.getEntityById(row['id']).getLabel(), title=self.getEntityById(row['id']).getTitle(), creators=self.getEntityById(row['id']).getCreators())
+            ewc.append(entity_with_metadata)
 
         return ewc
     

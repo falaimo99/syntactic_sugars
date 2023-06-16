@@ -2,7 +2,6 @@ from Processor import Processor
 from json import load
 from rdflib import Graph, URIRef, RDF, Literal
 from rdflib.plugins.stores.sparqlstore import SPARQLUpdateStore
-import sparql_dataframe
 
 
 EntityWithMetadata = URIRef("https://github.com/falaimo99/syntactic_sugars/vocabulary/EntityWithMetadata")
@@ -29,11 +28,11 @@ class CollectionProcessor(Processor):
                 
                 db = Graph()
 
-                counter_dict = {
-                "Collection": 0,
-                "Manifest": 0,
-                "Canvas": 0,
-                }
+                # counter_dict = {
+                # "Collection": 0,
+                # "Manifest": 0,
+                # "Canvas": 0,
+                # }
                 
                 def pop_graph(db, json_data):
                 

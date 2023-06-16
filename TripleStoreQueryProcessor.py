@@ -78,9 +78,8 @@ class TriplestoreQueryProcessor(QueryProcessor):
         select ?id
         where { 
   
-        <%s> sysu:items ?o .
-        ?o sysu:items ?id .
-        ?id sysu:label ?label
+        <%s> sysu:items ?man_id .
+        ?man_id sysu:items ?id 
   
         } 
 

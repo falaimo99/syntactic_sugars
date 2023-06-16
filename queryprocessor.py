@@ -6,7 +6,6 @@ import pandas as pd
 class QueryProcessor(Processor):
     def __init__(self):
         super(Processor).__init__()
-        self.DbPathOrUrl = Processor.setDbPathOrUrl
     
     def getEntityById(self, id):
         if self.DbPathOrUrl.endswith(".db"):
@@ -32,10 +31,9 @@ class QueryProcessor(Processor):
             PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
             PREFIX sysu:  <https://github.com/falaimo99/syntactic_sugars/vocabulary/>
 
-            select ?id ?label ?int_id ?type where{
+            select ?id ?label ?type where{
                 ?id rdf:type ?type .
                 ?id sysu:label ?label .
-                ?id sysu:id ?int_id
                 FILTER(?id=<%s>)
             }
             """%(str(id))
