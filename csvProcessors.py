@@ -2,9 +2,6 @@ from sqlite3 import connect
 from pandas import read_csv, Series, DataFrame
 import pandas as pd
 from Processor import Processor
-import re
-
-pd.options.mode.chained_assignment = None
 
 class AnnotationProcessor(Processor): 
     def __init__(self):
@@ -37,7 +34,7 @@ class AnnotationProcessor(Processor):
         if annotations_ids.empty and image_ids.empty:
              return False
         else:
-             return True         
+             return True 
 
 
 class MetadataProcessor(Processor):
@@ -46,40 +43,30 @@ class MetadataProcessor(Processor):
     def uploadData(self, path:str):
         path1 = read_csv(path, keep_default_na=False, dtype={"id":"string", "creator":"string", "title":"string"})
         
-        creators = path1[["creator"]]
-        for i in creators["creator"]:
-            if ";" in i:
-                creators["creator"] = creators["creator"].str.split(r";\s") 
-                creators = creators.explode("creator")
-                creators = creators.reset_index(drop=True)
-        values_df2 = creators["creator"].values
-        list_1 =[]
-        creator_internal_id = []
-        for z in values_df2:
-                if z not in list_1:
-                        list_1.append(z)
-                        creator_internal_id.append("creator-" + str(list_1.index(z)))
-                else:
-                    for i in list_1:
-                        if z == i:
-                            creator_internal_id.append("creator-" + str(list_1.index(i)))
-        creators.insert(0,"creatorId", Series(creator_internal_id, dtype= "string")) 
-        
         metadata = path1[["id", "title","creator"]]
-        metadata = metadata.rename(columns={"creator":"creators"})
-        for index, row in metadata.iterrows():
-                for item_idx, item in row.items():
-                        if item_idx =="creator":
-                                if ";" in item:
-                                        row_to_copy = metadata.loc[index:index]  
-                                        metadata = pd.concat([metadata.loc[:index], row_to_copy, metadata.loc[index+1:]]).reset_index(drop=True)
-        # metadata = metadata.drop(["creators"], axis = 1)      
-        metadata = metadata.join(creators["creatorId"])  
-                                
+        metadata = metadata.rename(columns={"creator": "creators"})
         metadata_id = []
         for idx, row in metadata.iterrows():
             metadata_id.append("metadata-" + str(idx))
-        metadata.insert(0, "metadata_internal_id", Series(metadata_id, dtype="string"))
+        metadata.insert(0, "metadata_internal_id", Series(metadata_id, dtype="string")) 
+        
+        z = []
+        y = []
+        for idx, row in metadata.iterrows():
+            for column_name, cell_value in row.items():
+                    if column_name == 'creators':
+                        if ';' in cell_value:
+                            cell_value = cell_value.split("; ")
+                            num_items = len(cell_value)
+                            y.extend([row.iloc[0]] * num_items)
+                            for i in cell_value:
+                                z.append(i)
+                        else:
+                            if cell_value != "":
+                                z.append(cell_value)
+                                first_element = row.iloc[0]
+                                y.append(first_element)
+        creators = pd.DataFrame({'metadata_internal_id': y, 'creator': z})
 
         with connect(self.DbPathOrUrl) as con:   
             metadata.to_sql("EntityWithMetadata", con, if_exists="replace", index=False)

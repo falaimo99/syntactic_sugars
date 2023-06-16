@@ -24,7 +24,9 @@ class GenericQueryProcessor():
         for queryprocessor in self.queryProcessors:
             if isinstance(queryprocessor, RelationalQueryProcessor):
                 df = queryprocessor.getAllAnnotations()
+
                 annotations = []
+
                 for x, row in df.iterrows():
                     annotation = Annotation(id=row['annotation'], motivation=['motivation'], body=Image(row['body']), target=['target'])
                     annotations.append(annotation)

@@ -72,42 +72,42 @@ class CollectionProcessor(Processor):
                                         db.add(triple)
                                         pop_graph(db, dict)
 
-                def counter(db, json_data, counter_dict):
+                # def counter(db, json_data, counter_dict):
 
-                    for key, value in json_data.items():
+                #     for key, value in json_data.items():
 
-                        if key == "id":
-                            subj = URIRef(value)
+                #         if key == "id":
+                #             subj = URIRef(value)
 
-                        if key == "type":
+                #         if key == "type":
 
-                            if value in counter_dict:
+                #             if value in counter_dict:
 
-                                counter_dict[value] += 1
+                #                 counter_dict[value] += 1
                                 
-                                if value == "Collection":
-                                    obj = Literal("col-" + str(counter_dict[value]))
-                                    triple = (subj, id, obj)
-                                    db.add(triple)
+                #                 if value == "Collection":
+                #                     obj = Literal("col-" + str(counter_dict[value]))
+                #                     triple = (subj, id, obj)
+                #                     db.add(triple)
 
-                                elif value == "Manifest":
-                                    counter_dict['Canvas'] = 0
-                                    obj = Literal("man-" + str(counter_dict[value]))
-                                    triple = (subj, id, obj)
-                                    db.add(triple)
+                #                 elif value == "Manifest":
+                #                     counter_dict['Canvas'] = 0
+                #                     obj = Literal("man-" + str(counter_dict[value]))
+                #                     triple = (subj, id, obj)
+                #                     db.add(triple)
 
-                                elif value == "Canvas":
-                                    obj = Literal("can-" + str(counter_dict[value]))
-                                    triple = (subj, id, obj)
-                                    db.add(triple)
+                #                 elif value == "Canvas":
+                #                     obj = Literal("can-" + str(counter_dict[value]))
+                #                     triple = (subj, id, obj)
+                #                     db.add(triple)
                             
-                            else:
-                                counter_dict[value] = 1
+                #             else:
+                #                 counter_dict[value] = 1
 
-                        if key == "items":
+                #         if key == "items":
 
-                            for dict in value:
-                                counter(db, dict, counter_dict)
+                #             for dict in value:
+                #                 counter(db, dict, counter_dict)
 
 
 
@@ -125,7 +125,7 @@ class CollectionProcessor(Processor):
                     store.close()
 
 
-                counter(db, json_data, counter_dict)
+                # counter(db, json_data, counter_dict)
                 pop_graph(db, json_data)
                 sparql_endpoint(self.DbPathOrUrl)
 

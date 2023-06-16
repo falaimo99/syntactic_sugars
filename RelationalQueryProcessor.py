@@ -2,7 +2,6 @@ from sqlite3 import connect
 from pandas import read_csv, Series, DataFrame, read_sql
 import pandas as pd
 from QueryProcessor import QueryProcessor
-pd.options.mode.chained_assignment = None
 
 
 
@@ -42,30 +41,30 @@ class RelationalQueryProcessor(QueryProcessor):
 
     def getEntitiesWithCreator(self, creator_name): 
         with connect(self.DbPathOrUrl) as con: 
-            query_6 = "SELECT DISTINCT id,title,creators FROM EntityWithMetadata LEFT JOIN creators_table ON EntityWithMetadata.creatorId == creators_table.creatorId WHERE creator=?"
+            query_6 = "SELECT id,title,creators FROM EntityWithMetadata LEFT JOIN creators_table ON EntityWithMetadata.metadata_internal_id== creators_table.metadata_internal_id WHERE creator=?"
             entities_with_creator_query = read_sql(query_6,con,params=(creator_name,))
         return entities_with_creator_query
 
     def getEntitiesWithTitle(self, title): 
         with connect(self.DbPathOrUrl) as con: 
-            query_7 = "SELECT DISTINCT id,title,creators FROM EntityWithMetadata WHERE title=?"
+            query_7 = "SELECT id,creators,title FROM EntityWithMetadata WHERE title=?"
             entities_with_title_query = read_sql(query_7,con,params=(title,))
         return entities_with_title_query
     
     def getEntitiesCanvas(self): 
         with connect(self.DbPathOrUrl) as con: 
-            query_8 = "SELECT DISTINCT id,creators,title FROM EntityWithMetadata WHERE id LIKE '%canvas%'"
+            query_8 = "SELECT id,creators,title FROM EntityWithMetadata WHERE id LIKE '%canvas%'"
             entities_c_query = read_sql(query_8, con)
         return entities_c_query
     
     def getEntitiesManifest(self): 
         with connect(self.DbPathOrUrl) as con: 
-            query_9 = "SELECT DISTINCT id,creators,title FROM EntityWithMetadata WHERE id LIKE '%manifest%'"
+            query_9 = "SELECT id,creators,title FROM EntityWithMetadata WHERE id LIKE '%manifest%'"
             entities_m_query = read_sql(query_9, con)
         return entities_m_query
 
     def getEntitiesCollection(self): 
         with connect(self.DbPathOrUrl) as con: 
-            query_10 = "SELECT DISTINCT id,creators,title FROM EntityWithMetadata WHERE id LIKE '%collection%'"
+            query_10 = "SELECT id,creators,title FROM EntityWithMetadata WHERE id LIKE '%collection%'"
             entities_col_query = read_sql(query_10, con)
         return entities_col_query
