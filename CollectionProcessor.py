@@ -28,14 +28,36 @@ class CollectionProcessor(Processor):
                 
                 db = Graph()
 
-                # counter_dict = {
-                # "Collection": 0,
-                # "Manifest": 0,
-                # "Canvas": 0,
-                # }
+                counter_dict = {
+                "Collection": 0,
+                "Manifest": 0,
+                "Canvas": 0,
+                }
                 
                 def pop_graph(db, json_data):
                 
+                    for key, value in json_data.items():
+                        if key == "id":
+                            subj = URIRef(value)
+                        
+                        if key == "label":
+                            for key, value in value.items():
+                                for element in value:    
+                                    obj = Literal(element)
+                                    triple = (subj, label, obj)
+                                    db.add(triple)
+                            
+                        if key == "items":
+                            for dict in value:
+                                for int_key, int_value in dict.items():
+                                    if int_key == "id":
+                                        obj = URIRef(int_value)
+                                        triple = (subj, items_property, obj)
+                                        db.add(triple)
+                                        pop_graph(db, dict)
+
+                def type_order_output(db, json_data): 
+                    
                     for key, value in json_data.items():
                         if key == "id":
                             subj = URIRef(value)
@@ -55,58 +77,43 @@ class CollectionProcessor(Processor):
                             triple = (subj, RDF.type, obj)
                             db.add(triple)
 
-                        if key == "label":
-                            for key, value in value.items():
-                                for element in value:    
-                                    obj = Literal(element)
-                                    triple = (subj, label, obj)
+
+                def counter(db, json_data, counter_dict):
+
+                    for key, value in json_data.items():
+
+                        if key == "id":
+                            subj = URIRef(value)
+
+                        if key == "type":
+
+                            if value in counter_dict:
+
+                                counter_dict[value] += 1
+                                
+                                if value == "Collection":
+                                    obj = Literal(counter_dict[value])
+                                    triple = (subj, id, obj)
+                                    db.add(triple)
+
+                                elif value == "Manifest":
+                                    counter_dict['Canvas'] = 0
+                                    obj = Literal(counter_dict[value])
+                                    triple = (subj, id, obj)
+                                    db.add(triple)
+
+                                elif value == "Canvas":
+                                    obj = Literal(counter_dict[value])
+                                    triple = (subj, id, obj)
                                     db.add(triple)
                             
+                            else:
+                                counter_dict[value] = 1
+
                         if key == "items":
+
                             for dict in value:
-                                for int_key, int_value in dict.items():
-                                    if int_key == "id":
-                                        obj = URIRef(int_value)
-                                        triple = (subj, items_property, obj)
-                                        db.add(triple)
-                                        pop_graph(db, dict)
-
-                # def counter(db, json_data, counter_dict):
-
-                #     for key, value in json_data.items():
-
-                #         if key == "id":
-                #             subj = URIRef(value)
-
-                #         if key == "type":
-
-                #             if value in counter_dict:
-
-                #                 counter_dict[value] += 1
-                                
-                #                 if value == "Collection":
-                #                     obj = Literal("col-" + str(counter_dict[value]))
-                #                     triple = (subj, id, obj)
-                #                     db.add(triple)
-
-                #                 elif value == "Manifest":
-                #                     counter_dict['Canvas'] = 0
-                #                     obj = Literal("man-" + str(counter_dict[value]))
-                #                     triple = (subj, id, obj)
-                #                     db.add(triple)
-
-                #                 elif value == "Canvas":
-                #                     obj = Literal("can-" + str(counter_dict[value]))
-                #                     triple = (subj, id, obj)
-                #                     db.add(triple)
-                            
-                #             else:
-                #                 counter_dict[value] = 1
-
-                #         if key == "items":
-
-                #             for dict in value:
-                #                 counter(db, dict, counter_dict)
+                                counter(db, dict, counter_dict)
 
 
 
@@ -124,10 +131,15 @@ class CollectionProcessor(Processor):
                     store.close()
 
 
-                # counter(db, json_data, counter_dict)
+                counter(db, json_data, counter_dict)
+                type_order_output(db,json_data)
                 pop_graph(db, json_data)
                 sparql_endpoint(self.DbPathOrUrl)
 
                 return True
     except:
         False
+
+col =CollectionProcessor()
+col.setDbPathOrUrl('http://127.0.0.1:9999/blazegraph/sparql')
+col.uploadData('data/collection-1.json')

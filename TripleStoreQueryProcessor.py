@@ -12,11 +12,12 @@ class TriplestoreQueryProcessor(QueryProcessor):
         query = """
         PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         PREFIX sysu:  <https://github.com/falaimo99/syntactic_sugars/vocabulary/>
-        select ?id ?label 
+        select ?id ?label ?int_id
         where {
         
             ?id rdf:type sysu:Canvas .
-            ?id sysu:label ?label
+            ?id sysu:label ?label .
+            ?id sysu:id ?int_id
             
             }
 

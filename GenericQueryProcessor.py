@@ -40,6 +40,8 @@ class GenericQueryProcessor():
             if isinstance(queryprocessor, RelationalQueryProcessor):
                 relational_df = queryprocessor.getEntitiesCanvas()
         
+        triplestore_df = triplestore_df.sort_values(by='int_id')
+        
         df = triplestore_df.merge(relational_df, left_on='id', right_on='id')
         
         canvases = []
@@ -253,8 +255,8 @@ class GenericQueryProcessor():
         ewc = []
 
         for x, row in triplestore_df.iterrows():
-            entity_with_metadata = EntityWithMetadata(id=row['id'], label=self.getEntityById(row['id']).getLabel(), title=self.getEntityById(row['id']).getTitle(), creators=self.getEntityById(row['id']).getCreators())
-            ewc.append(entity_with_metadata)
+                entity_with_metadata = EntityWithMetadata(id=row['id'], label=self.getEntityById(row['id']).getLabel(), title=self.getEntityById(row['id']).getTitle(), creators=self.getEntityById(row['id']).getCreators())
+                ewc.append(entity_with_metadata)
 
         return ewc
     
