@@ -37,7 +37,7 @@ class EntityWithMetadata(IdentifiableEntity):
     def getCreators(self):
         list_creators = []
         if len(self.creators) == 0:
-            return None
+            return list_creators
         elif ";" in self.creators:
             list_creators = self.creators.split("; ")
             return list_creators
