@@ -215,7 +215,7 @@ class GenericQueryProcessor():
             for annotation in self.getAllAnnotations():
                 if id == annotation.getId():
                     return annotation
-        elif id.endswith('.jpg'):
+        elif id.endswith('.jpg' or '.png' or '.tiff' or 'gif'):
             for image in self.getAllImages():
                 if id == image.getId():
                     return image

@@ -53,12 +53,13 @@ class TriplestoreQueryProcessor(QueryProcessor):
         query = """
         PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         PREFIX sysu:  <https://github.com/falaimo99/syntactic_sugars/vocabulary/>
-        select ?manifest ?label ?items
+        select ?manifest ?label ?items ?int_id
         where {
         
             ?manifest rdf:type sysu:Manifest .
             ?manifest sysu:label ?label .
-            ?manifest sysu:items ?items
+            ?manifest sysu:items ?items .
+            ?manifest sysu:id ?int_id
             
             }
 
