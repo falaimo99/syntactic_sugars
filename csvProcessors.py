@@ -45,7 +45,7 @@ class MetadataProcessor(Processor):
     def uploadData(self, path:str):
         path1 = read_csv(path, keep_default_na=False, dtype={"id":"string", "creator":"string", "title":"string"})
         if path1.empty:
-            raise ValueError("DataFrame is empty")
+            raise ValueError("CSV file is empty")
         else:
             metadata = path1[["id", "title","creator"]]
             metadata = metadata.rename(columns={"creator": "creators"})
@@ -54,23 +54,23 @@ class MetadataProcessor(Processor):
                 metadata_id.append("metadata-" + str(idx))
             metadata.insert(0, "metadata_internal_id", Series(metadata_id, dtype="string")) 
                 
-            z = []
-            y = []
+            creator_list = []
+            int_id_list = []
             for idx, row in metadata.iterrows():
                 for column_name, cell_value in row.items():
                         if column_name == 'creators':
                             if ';' in cell_value:
                                 cell_value = cell_value.split("; ")
                                 num_items = len(cell_value)
-                                y.extend([row.iloc[0]] * num_items)
+                                int_id_list.extend([row.iloc[0]] * num_items)
                                 for i in cell_value:
-                                    z.append(i)
+                                    creator_list.append(i)
                             else:
                                 if cell_value != "":
-                                    z.append(cell_value)
+                                    creator_list.append(cell_value)
                                     first_element = row.iloc[0]
-                                    y.append(first_element)
-            creators = pd.DataFrame({'metadata_internal_id': y, 'creator': z})
+                                    int_id_list.append(first_element)
+            creators = pd.DataFrame({'metadata_internal_id': int_id_list, 'creator': creator_list})
 
             with connect(self.DbPathOrUrl) as con:   
                 metadata.to_sql("EntityWithMetadata", con, if_exists="replace", index=False)
