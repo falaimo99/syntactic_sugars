@@ -9,7 +9,7 @@ class Image(IdentifiableEntity):
         super().__init__(id)
 
 class Annotation(IdentifiableEntity): 
-    def __init__(self, id, motivation, body:Image, target:IdentifiableEntity):
+    def __init__(self, id:str, motivation:str, body:Image, target:IdentifiableEntity):
         self.motivation = motivation
         self.body = body
         self.target = target
@@ -47,12 +47,12 @@ class EntityWithMetadata(IdentifiableEntity):
 
         
 class Canvas(EntityWithMetadata):
-    def __init__(self, id, label, title, creators):
+    def __init__(self, id:str, label:str, title:str, creators:str):
         super().__init__(id, label, title, creators)
     
 
 class Manifest(EntityWithMetadata):
-    def __init__(self, id, label, title, creators, items):
+    def __init__(self, id:str, label:str, title:str, creators:str, items):
         self.items = items
         super().__init__(id, label, title, creators)
 
@@ -69,7 +69,7 @@ class Manifest(EntityWithMetadata):
                 return list_items
 
 class Collection(EntityWithMetadata):
-    def __init__(self, id, label, title, creators, items):
+    def __init__(self, id:str, label:str, title:str, creators:str, items):
         self.items = items
         super().__init__(id, label, title, creators)
         

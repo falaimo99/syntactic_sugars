@@ -5,18 +5,19 @@ import pandas as pd
 
 pd.options.display.max_colwidth = 100
 
-class GenericQueryProcessor():
+class GenericQueryProcessor(object):
     def __init__(self):
-        self.queryProcessors = []
+        self.queryProcessors = list()
+        
 
     def cleanQueryProcessors(self):
         self.queryProcessors = []
         if self.queryProcessors == []:
             return True
 
-    def addQueryProcessor(self, processor):
-        self.queryProcessors.append(processor)
-        if processor in self.queryProcessors:
+    def addQueryProcessor(self, QueryProcessor):
+        self.queryProcessors.append(QueryProcessor)
+        if QueryProcessor in self.queryProcessors:
             return True
 
     def getAllAnnotations(self):
@@ -110,7 +111,7 @@ class GenericQueryProcessor():
         return manifests
     
     
-    def getAnnotationsToCanvas(self, target):
+    def getAnnotationsToCanvas(self, target:str):
         for queryprocessor in self.queryProcessors:
             if isinstance(queryprocessor, RelationalQueryProcessor):
                 df = queryprocessor.getAnnotationsWithTarget(target)
@@ -122,7 +123,7 @@ class GenericQueryProcessor():
                 
                 return atc
     
-    def getAnnotationsToCollection(self, target):
+    def getAnnotationsToCollection(self, target:str):
         for queryprocessor in self.queryProcessors:
             if isinstance(queryprocessor, RelationalQueryProcessor):
               df = queryprocessor.getAnnotationsWithTarget(target)
@@ -134,7 +135,7 @@ class GenericQueryProcessor():
             
             return atc
         
-    def getAnnotationsToManifest(self, target):
+    def getAnnotationsToManifest(self, target:str):
         for queryprocessor in self.queryProcessors:
             if isinstance(queryprocessor, RelationalQueryProcessor):
               df = queryprocessor.getAnnotationsWithTarget(target)
@@ -146,7 +147,7 @@ class GenericQueryProcessor():
             
             return atm
         
-    def getAnnotationsWithBody(self, body):
+    def getAnnotationsWithBody(self, body:str):
         for queryprocessor in self.queryProcessors:
             if isinstance(queryprocessor, RelationalQueryProcessor):
               df = queryprocessor.getAnnotationsWithBody(body)
@@ -158,7 +159,7 @@ class GenericQueryProcessor():
             
             return awb
     
-    def getAnnotationsWithBodyAndTarget(self, body, target):
+    def getAnnotationsWithBodyAndTarget(self, body:str, target:str):
         for queryprocessor in self.queryProcessors:
             if isinstance(queryprocessor, RelationalQueryProcessor):
               df = queryprocessor.getAnnotationsWithBodyAndTarget(body, target)
@@ -170,7 +171,7 @@ class GenericQueryProcessor():
             
             return awbat
     
-    def getAnnotationsWithTarget(self, target):
+    def getAnnotationsWithTarget(self, target:str):
         for queryprocessor in self.queryProcessors:
             if isinstance(queryprocessor, RelationalQueryProcessor):
                 df = queryprocessor.getAnnotationsWithTarget(target)
@@ -182,7 +183,7 @@ class GenericQueryProcessor():
         
         return awt
         
-    def getCanvasesInCollection(self, collection):
+    def getCanvasesInCollection(self, collection:str):
         for queryprocessor in self.queryProcessors:
             if isinstance(queryprocessor, TriplestoreQueryProcessor):
                 df = queryprocessor.getCanvasesInCollection(collection)
@@ -196,7 +197,7 @@ class GenericQueryProcessor():
         
         return cic
     
-    def getCanvasesInManifest(self, manifest):
+    def getCanvasesInManifest(self, manifest:str):
         for queryprocessor in self.queryProcessors:
             if isinstance(queryprocessor, TriplestoreQueryProcessor):
                 df = queryprocessor.getCanvasesInManifest(manifest)
@@ -234,7 +235,7 @@ class GenericQueryProcessor():
         else:
             return None
     
-    def getEntitiesWithCreator(self, creator):
+    def getEntitiesWithCreator(self, creator:str):
         for queryprocessor in self.queryProcessors:
             if isinstance(queryprocessor, RelationalQueryProcessor):
                 relational_df = queryprocessor.getEntitiesWithCreator(creator)
@@ -247,7 +248,7 @@ class GenericQueryProcessor():
 
         return ewc
 
-    def getEntitiesWithLabel(self, label):
+    def getEntitiesWithLabel(self, label:str):
         for queryprocessor in self.queryProcessors:
             if isinstance(queryprocessor, TriplestoreQueryProcessor):
                 triplestore_df = queryprocessor.getEntitiesWithLabel(label)
@@ -260,7 +261,7 @@ class GenericQueryProcessor():
 
         return ewc
     
-    def getEntitiesWithTitle(self, title):
+    def getEntitiesWithTitle(self, title:str):
         for queryprocessor in self.queryProcessors:
             if isinstance(queryprocessor, RelationalQueryProcessor):
                 relational_df = queryprocessor.getEntitiesWithTitle(title)
@@ -273,7 +274,7 @@ class GenericQueryProcessor():
 
         return ewt
     
-    def getImagesAnnotatingCanvas(self, canvas):
+    def getImagesAnnotatingCanvas(self, canvas:str):
 
         iac = []
 
@@ -283,7 +284,7 @@ class GenericQueryProcessor():
 
         return iac
     
-    def getManifestsInCollection(self, collection):
+    def getManifestsInCollection(self, collection:str):
         for queryprocessor in self.queryProcessors:
             if isinstance(queryprocessor, TriplestoreQueryProcessor):
                 df = queryprocessor.getManifestsInCollection(collection)

@@ -2,7 +2,7 @@ class Processor(object):
     def __init__(self):
         self.DbPathOrUrl = ""
         
-    def setDbPathOrUrl(self, new_path):
+    def setDbPathOrUrl(self, new_path:str):
         self.DbPathOrUrl = new_path
         if new_path:
             return True 

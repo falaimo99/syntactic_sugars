@@ -21,31 +21,31 @@ class RelationalQueryProcessor(QueryProcessor):
             all_images_query = read_sql(query_2,con)
         return all_images_query
 
-    def getAnnotationsWithBody(self, bodyId): 
+    def getAnnotationsWithBody(self, bodyId:str): 
         with connect(self.DbPathOrUrl) as con: 
             query_3 = "SELECT annotation,target,body,motivation FROM Annotation LEFT JOIN image ON Annotation.imageId == image.imageId WHERE body=?"
             annotations_with_body_query = read_sql(query_3,con,params=(bodyId,))
         return annotations_with_body_query
 
-    def getAnnotationsWithBodyAndTarget(self, bodyId, targetId): 
+    def getAnnotationsWithBodyAndTarget(self, bodyId:str, targetId:str): 
         with connect(self.DbPathOrUrl) as con: 
             query_4 = "SELECT annotation,target,body,motivation FROM Annotation LEFT JOIN image ON Annotation.imageId == image.imageId WHERE body=? AND target=?"
             annotations_with_body_and_target_query = read_sql(query_4,con,params=(bodyId, targetId))
         return annotations_with_body_and_target_query
 
-    def getAnnotationsWithTarget(self, targetId): 
+    def getAnnotationsWithTarget(self, targetId:str): 
         with connect(self.DbPathOrUrl) as con: 
             query_5 = "SELECT annotation,target,body,motivation FROM Annotation LEFT JOIN image ON Annotation.imageId == image.imageId WHERE target=?"
             annotations_with_target_query = read_sql(query_5,con,params=(targetId,))
         return annotations_with_target_query
 
-    def getEntitiesWithCreator(self, creator_name): 
+    def getEntitiesWithCreator(self, creator_name:str): 
         with connect(self.DbPathOrUrl) as con: 
             query_6 = "SELECT id,title,creators FROM EntityWithMetadata LEFT JOIN creators_table ON EntityWithMetadata.metadata_internal_id== creators_table.metadata_internal_id WHERE creator=?"
             entities_with_creator_query = read_sql(query_6,con,params=(creator_name,))
         return entities_with_creator_query
 
-    def getEntitiesWithTitle(self, title): 
+    def getEntitiesWithTitle(self, title:str): 
         with connect(self.DbPathOrUrl) as con: 
             query_7 = "SELECT id,creators,title FROM EntityWithMetadata WHERE title=?"
             entities_with_title_query = read_sql(query_7,con,params=(title,))
