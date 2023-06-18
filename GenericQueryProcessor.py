@@ -11,7 +11,7 @@ class GenericQueryProcessor():
 
     def cleanQueryProcessors(self):
         self.queryProcessors = []
-        if not self.queryProcessors:
+        if self.queryProcessors == []:
             return True
 
     def addQueryProcessor(self, processor):
