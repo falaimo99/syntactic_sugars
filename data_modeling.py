@@ -19,7 +19,7 @@ class Annotation(IdentifiableEntity):
     def getMotivation(self):
         return self.motivation
     def getTarget(self):
-        return self.id
+        return self.target
 
 class EntityWithMetadata(IdentifiableEntity):
     def __init__(self, id:str, label:str, title:str, creators:str):
