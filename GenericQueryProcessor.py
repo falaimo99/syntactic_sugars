@@ -27,7 +27,7 @@ class GenericQueryProcessor():
                 annotations = []
 
                 for x, row in df.iterrows():
-                    annotation = Annotation(id=row['annotation'], motivation=['motivation'], body=Image(row['body']), target=['target'])
+                    annotation = Annotation(id=row['annotation'], motivation=row['motivation'], body=Image(row['body']), target=row['target'])
                     annotations.append(annotation)
             
                 return annotations
@@ -70,7 +70,7 @@ class GenericQueryProcessor():
         collections = []
 
         for x, row in df.iterrows():
-            collection = Collection(id=row['collection'], label=row['label'], title=row['title'], creators=['creators'], items=self.getManifestsInCollection(row['collection']))
+            collection = Collection(id=row['collection'], label=row['label'], title=row['title'], creators=row['creators'], items=self.getManifestsInCollection(row['collection']))
             collections.append(collection)
 
         return collections
@@ -104,7 +104,7 @@ class GenericQueryProcessor():
         manifests = []
 
         for x, row in df.iterrows():
-            manifest = Manifest(id=row['manifest'], label=row['label'], title=row['title'], creators=['creators'], items=self.getCanvasesInManifest(row['manifest']))
+            manifest = Manifest(id=row['manifest'], label=row['label'], title=row['title'], creators=row['creators'], items=self.getCanvasesInManifest(row['manifest']))
             manifests.append(manifest)
 
         return manifests
