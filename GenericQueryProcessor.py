@@ -255,7 +255,7 @@ class GenericQueryProcessor():
         ewc = []
 
         for x, row in triplestore_df.iterrows():
-                entity_with_metadata = EntityWithMetadata(id=row['id'], label=self.getEntityById(row['id']).getLabel(), title=self.getEntityById(row['id']).getTitle(), creators=self.getEntityById(row['id']).getCreators())
+                entity_with_metadata = EntityWithMetadata(id=row['id'], label=row['label'], title=self.getEntityById(row['id']).getTitle(), creators=self.getEntityById(row['id']).getCreators())
                 ewc.append(entity_with_metadata)
 
         return ewc
@@ -278,7 +278,7 @@ class GenericQueryProcessor():
         iac = []
 
         for i in self.getAnnotationsToCanvas(canvas):
-            image = Image(id=i.getBody().getId())
+            image = i.getBody()
             iac.append(image)
 
         return iac
