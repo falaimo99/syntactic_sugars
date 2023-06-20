@@ -40,24 +40,6 @@ class CollectionProcessor(Processor):
                         if key == "id":
                             subj = URIRef(value)
                         
-                        if key == "label":
-                            for key, value in value.items():
-                                for element in value:    
-                                    obj = Literal(element)
-                                    triple = (subj, label, obj)
-                                    db.add(triple)
-                            
-                        if key == "items":
-                            for dict in value:
-                                for int_key, int_value in dict.items():
-                                    if int_key == "id":
-                                        obj = URIRef(int_value)
-                                        triple = (subj, items_property, obj)
-                                        db.add(triple)
-                                        pop_graph(db, dict)
-
-                def type_order_output(db, json_data): 
-                    
                     for key, value in json_data.items():
                         if key == "id":
                             subj = URIRef(value)
@@ -77,6 +59,21 @@ class CollectionProcessor(Processor):
                             triple = (subj, RDF.type, obj)
                             db.add(triple)
 
+                        if key == "label":
+                            for key, value in value.items():
+                                for element in value:    
+                                    obj = Literal(element)
+                                    triple = (subj, label, obj)
+                                    db.add(triple)
+                            
+                        if key == "items":
+                            for dict in value:
+                                for int_key, int_value in dict.items():
+                                    if int_key == "id":
+                                        obj = URIRef(int_value)
+                                        triple = (subj, items_property, obj)
+                                        db.add(triple)
+                                        pop_graph(db, dict)
 
                 def counter(db, json_data, counter_dict):
 
@@ -132,7 +129,6 @@ class CollectionProcessor(Processor):
 
 
                 counter(db, json_data, counter_dict)
-                type_order_output(db,json_data)
                 pop_graph(db, json_data)
                 sparql_endpoint(self.DbPathOrUrl)
 
