@@ -3,13 +3,12 @@ from TripleStoreQueryProcessor import TriplestoreQueryProcessor
 from RelationalQueryProcessor import RelationalQueryProcessor
 import pandas as pd
 
-pd.options.display.max_colwidth = 100
 
 class GenericQueryProcessor(object):
     def __init__(self):
         self.queryProcessors = list()
         
-
+        
     def cleanQueryProcessors(self):
         self.queryProcessors = []
         if self.queryProcessors == []:
@@ -44,7 +43,7 @@ class GenericQueryProcessor(object):
         triplestore_df = triplestore_df.sort_values(by='int_id')
         
         df = triplestore_df.merge(relational_df, left_on='id', right_on='id')
-        
+
         canvases = []
         
         for x, row in df.iterrows():

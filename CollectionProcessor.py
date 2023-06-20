@@ -135,7 +135,3 @@ class CollectionProcessor(Processor):
                 return True
     except:
         False
-
-col =CollectionProcessor()
-col.setDbPathOrUrl('http://127.0.0.1:9999/blazegraph/sparql')
-col.uploadData('data/collection-1.json')

@@ -79,5 +79,4 @@ class MetadataProcessor(Processor):
             if metadata.empty and creators.empty:
                 return False
             else:
-                return True 
-            
+                return True

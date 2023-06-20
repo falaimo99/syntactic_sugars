@@ -12,15 +12,15 @@ class TriplestoreQueryProcessor(QueryProcessor):
         query = """
         PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         PREFIX sysu:  <https://github.com/falaimo99/syntactic_sugars/vocabulary/>
-        select ?id ?label ?int_id
-        where {
         
-            ?id rdf:type sysu:Canvas .
-            ?id sysu:label ?label .
-            ?id sysu:id ?int_id
+        SELECT ?id ?label ?int_id
+        
+        WHERE {
+            ?id rdf:type sysu:Canvas ;
+                sysu:label ?label ;
+                sysu:id ?int_id .
             
             }
-
         """
 
         df_canvases = get(endpoint, query, True)
@@ -35,10 +35,12 @@ class TriplestoreQueryProcessor(QueryProcessor):
         PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         PREFIX sysu:  <https://github.com/falaimo99/syntactic_sugars/vocabulary/>
 
-        select ?collection ?label ?items where {
-            ?collection rdf:type sysu:Collection .
-            ?collection sysu:label ?label .
-            ?collection sysu:items ?items
+        SELECT ?collection ?label ?items 
+        
+        WHERE {
+            ?collection rdf:type sysu:Collection ;
+                        sysu:label ?label ;
+                        sysu:items ?items.
         } 
         """
 
@@ -53,16 +55,13 @@ class TriplestoreQueryProcessor(QueryProcessor):
         query = """
         PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         PREFIX sysu:  <https://github.com/falaimo99/syntactic_sugars/vocabulary/>
-        select ?manifest ?label ?items ?int_id
-        where {
         
-            ?manifest rdf:type sysu:Manifest .
-            ?manifest sysu:label ?label .
-            ?manifest sysu:items ?items .
-            ?manifest sysu:id ?int_id
-            
-            }
-
+        SELECT ?manifest ?label ?items ?int_id
+        WHERE {
+            ?manifest rdf:type sysu:Manifest ;
+                      sysu:label ?label ;
+                      sysu:items ?items ;
+        }
         """
 
         df_manifests = get(endpoint, query, True)
@@ -77,11 +76,10 @@ class TriplestoreQueryProcessor(QueryProcessor):
         PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         PREFIX sysu:  <https://github.com/falaimo99/syntactic_sugars/vocabulary/>
 
-        select ?id
-        where { 
-  
-        <%s> sysu:items ?man_id .
-        ?man_id sysu:items ?id 
+        SELECT ?id
+        WHERE { 
+            <%s> sysu:items ?man_id .
+            ?man_id sysu:items ?id 
   
         } 
 
@@ -99,8 +97,8 @@ class TriplestoreQueryProcessor(QueryProcessor):
         PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         PREFIX sysu:  <https://github.com/falaimo99/syntactic_sugars/vocabulary/>
 
-        select ?id
-        where { 
+        SELECT ?id
+        WHERE { 
   
         <%s> sysu:items ?id .
   
@@ -119,10 +117,14 @@ class TriplestoreQueryProcessor(QueryProcessor):
         query ="""
         PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         PREFIX sysu:  <https://github.com/falaimo99/syntactic_sugars/vocabulary/>
-        select ?id ?label ?type where{
-            ?id sysu:label ?label .
-          	?id rdf:type ?type .
-            FILTER(?label="%s")
+        
+        SELECT ?id ?label ?type 
+        
+        WHERE {
+            "%s" rdf:type ?label .
+            ?id sysu:label ?label ;
+          	    rdf:type ?type .
+    
         }
         """%(str(label))
 
@@ -138,11 +140,11 @@ class TriplestoreQueryProcessor(QueryProcessor):
         PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         PREFIX sysu:  <https://github.com/falaimo99/syntactic_sugars/vocabulary/>
 
-        select ?id
-        where {
-  
-        <%s> sysu:items ?id .
-        ?id rdf:type sysu:Manifest
+        SELECT ?id
+        
+        WHERE {
+            <%s> sysu:items ?id .
+            ?id rdf:type sysu:Manifest . 
   
         }
         """%(str(collection))
