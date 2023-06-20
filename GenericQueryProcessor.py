@@ -1,4 +1,4 @@
-from data_modeling import *
+from dataModeling import *
 from TripleStoreQueryProcessor import TriplestoreQueryProcessor
 from RelationalQueryProcessor import RelationalQueryProcessor
 import pandas as pd
