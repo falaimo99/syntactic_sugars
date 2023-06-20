@@ -1,5 +1,5 @@
 from Processor import Processor
-from data_modeling import IdentifiableEntity, Annotation, Image, EntityWithMetadata, Collection, Manifest, Canvas
+from dataModeling import IdentifiableEntity, Annotation, Image, EntityWithMetadata, Collection, Manifest, Canvas
 from Processor import Processor
 from csvProcessors import AnnotationProcessor, MetadataProcessor
 from CollectionProcessor import CollectionProcessor
