@@ -56,11 +56,11 @@ class TriplestoreQueryProcessor(QueryProcessor):
         PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         PREFIX sysu:  <https://github.com/falaimo99/syntactic_sugars/vocabulary/>
         
-        SELECT ?manifest ?label ?items ?int_id
+        SELECT ?manifest ?label ?items
         WHERE {
             ?manifest rdf:type sysu:Manifest ;
                       sysu:label ?label ;
-                      sysu:items ?items ;
+                      sysu:items ?items .
         }
         """
 
@@ -79,7 +79,7 @@ class TriplestoreQueryProcessor(QueryProcessor):
         SELECT ?id
         WHERE { 
             <%s> sysu:items ?man_id .
-            ?man_id sysu:items ?id 
+            ?man_id sysu:items ?id .
   
         } 
 
@@ -100,7 +100,8 @@ class TriplestoreQueryProcessor(QueryProcessor):
         SELECT ?id
         WHERE { 
   
-        <%s> sysu:items ?id .
+        <%s> rdf:type sysu:Manifest ;
+            sysu:items ?id .
   
         } 
 
