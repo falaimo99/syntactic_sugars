@@ -35,10 +35,6 @@ class CollectionProcessor(Processor):
                 }
                 
                 def pop_graph(db, json_data):
-                
-                    for key, value in json_data.items():
-                        if key == "id":
-                            subj = URIRef(value)
                         
                     for key, value in json_data.items():
                         if key == "id":
