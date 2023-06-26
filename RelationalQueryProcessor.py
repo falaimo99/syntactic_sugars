@@ -41,7 +41,7 @@ class RelationalQueryProcessor(QueryProcessor):
 
     def getEntitiesWithCreator(self, creator_name:str): 
         with connect(self.DbPathOrUrl) as con: 
-            query_6 = "SELECT id,title,creators FROM EntityWithMetadata LEFT JOIN creators_table ON EntityWithMetadata.creatorId== creators_table.creatorId WHERE creator=?"
+            query_6 = "SELECT id,title,creators FROM EntityWithMetadata LEFT JOIN creators_table ON EntityWithMetadata.metadata_internal_id== creators_table.metadata_internal_id WHERE creator=?"
             entities_with_creator_query = read_sql(query_6,con,params=(creator_name,))
         return entities_with_creator_query
 
