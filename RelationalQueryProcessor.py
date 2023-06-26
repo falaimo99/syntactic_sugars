@@ -1,7 +1,7 @@
 from sqlite3 import connect
 from pandas import read_csv, Series, DataFrame, read_sql
 import pandas as pd
-from QueryProcessor import QueryProcessor
+from queryprocessor import QueryProcessor
 
 
 
