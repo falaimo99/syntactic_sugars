@@ -8,7 +8,7 @@ class GenericQueryProcessor(object):
     def __init__(self):
         self.queryProcessors = list()
         
-        
+
     def cleanQueryProcessors(self):
         self.queryProcessors = []
         if self.queryProcessors == []:
@@ -211,24 +211,19 @@ class GenericQueryProcessor(object):
         return cim
             
     def getEntityById(self, id:str):
-        if 'annotation' in id:    
-            for annotation in self.getAllAnnotations():
+        for annotation in self.getAllAnnotations():
                 if id == annotation.getId():
                     return annotation
-        elif id.endswith('.jpg' or '.png' or '.tiff' or 'gif'):
-            for image in self.getAllImages():
+        for image in self.getAllImages():
                 if id == image.getId():
                     return image
-        elif 'canvas' in id:    
-            for canvas in self.getAllCanvas():
+        for canvas in self.getAllCanvas():
                 if id == canvas.getId():
                     return canvas
-        elif 'manifest' in id:
-            for manifest in self.getAllManifests():
+        for manifest in self.getAllManifests():
                 if id == manifest.getId():
                     return manifest
-        elif 'collection' in id:      
-            for collection in self.getAllCollections():
+        for collection in self.getAllCollections():
                 if id == collection.getId():
                     return collection
         else:
@@ -241,9 +236,9 @@ class GenericQueryProcessor(object):
 
         ewc = []
 
-        for x, row in relational_df.iterrows():
-            entity_with_metadata = EntityWithMetadata(id=row['id'], label=self.getEntityById(row['id']).getLabel(), title=row['title'], creators=row['creators'])
-            ewc.append(entity_with_metadata)
+        for row in relational_df['id']:
+            entity = self.getEntityById(row)
+            ewc.append(entity)
 
         return ewc
 
@@ -251,12 +246,12 @@ class GenericQueryProcessor(object):
         for queryprocessor in self.queryProcessors:
             if isinstance(queryprocessor, TriplestoreQueryProcessor):
                 triplestore_df = queryprocessor.getEntitiesWithLabel(label)
-
+                
         ewc = []
 
-        for x, row in triplestore_df.iterrows():
-                entity_with_metadata = EntityWithMetadata(id=row['id'], label=row['label'], title=self.getEntityById(row['id']).getTitle(), creators=self.getEntityById(row['id']).getCreators())
-                ewc.append(entity_with_metadata)
+        for row in triplestore_df['id']:            
+            entity = self.getEntityById(row)
+            ewc.append(entity)
 
         return ewc
     
@@ -264,12 +259,12 @@ class GenericQueryProcessor(object):
         for queryprocessor in self.queryProcessors:
             if isinstance(queryprocessor, RelationalQueryProcessor):
                 relational_df = queryprocessor.getEntitiesWithTitle(title)
-                
+
         ewt = []
 
-        for x, row in relational_df.iterrows():
-            entity_with_metadata = EntityWithMetadata(id=row['id'], label=self.getEntityById(row['id']).getLabel(), title=row['title'], creators=row['creators'])
-            ewt.append(entity_with_metadata)
+        for row in relational_df['id']:
+            entity = self.getEntityById(row)           
+            ewt.append(entity)
 
         return ewt
     
