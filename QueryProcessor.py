@@ -40,4 +40,7 @@ class QueryProcessor(Processor):
 
             sparql_df = get(self.DbPathOrUrl, query, True)
 
-            return sparql_df   
+            return sparql_df
+        
+        else:
+            pd.DataFrame()
