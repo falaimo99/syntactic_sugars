@@ -119,13 +119,13 @@ class TriplestoreQueryProcessor(QueryProcessor):
         PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         PREFIX sysu:  <https://github.com/falaimo99/syntactic_sugars/vocabulary/>
         
-        SELECT ?id ?label ?type 
+        SELECT ?id ?label
         
         WHERE {
-            "%s" rdf:type ?label .
-            ?id sysu:label ?label ;
-          	    rdf:type ?type .
-    
+        
+            ?id sysu:label ?label .
+          
+    	FILTER(?label="%s")
         }
         """%(str(label))
 
